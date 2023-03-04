@@ -1,7 +1,5 @@
 # p10k config source
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+[[! -f ~/.p10k.zsh]] || source ~/.p10k.zsh
 
 # Terminal 中的 Report terminal type 改為 xterm-256color 
 export TERM='xterm-256color'

@@ -82,7 +82,14 @@ function setup_default_use_zsh {
     success "$title"
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh")
+# setting git
+function configure_git {
+    title="configure git"
+    print_step $1 "$title"
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.gitconfig > ~/.gitconfig
+}
+
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
