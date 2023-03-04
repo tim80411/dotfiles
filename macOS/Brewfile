@@ -24,6 +24,6 @@ cask "discord"
 cask "itsycal"
 cask "zoom"
 cask "chrome-remote-desktop-host"
+cask "google-drive"
+cask "slack"
 mas "LINE", id: 539883307
-mas "Google Drive", id: 507874739
-mas "Slack", id: 803453959 

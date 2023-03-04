@@ -10,7 +10,7 @@ adapt self setting
 ### 1. `install.sh`
    
    ```
-   sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/install.sh)"
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/install.sh)"
    ```
 ### 2. Setting `iTerm` font family
 
