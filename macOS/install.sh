@@ -48,7 +48,7 @@ function install_homebrew {
 function install_homebrew_dependencies {
     title="Install Homebrew dependencies"
     print_step $1 "$title"
-    curl -fsSL https://raw.githubusercontent.com/alfredotang/dotfiles/master/macOS/Brewfile > /tmp/Brewfile  
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/Brewfile > /tmp/Brewfile  
     brew bundle --file /tmp/Brewfile  
     rm /tmp/Brewfile
 
@@ -59,7 +59,7 @@ function install_homebrew_dependencies {
 function configuare_zsh {
     title="configuare zsh"
     print_step $1 "$title"
-    curl -fsSL https://raw.githubusercontent.com/alfredotang/dotfiles/master/macOS/.zshrc > ~/.zshrc
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zshrc > ~/.zshrc
     success "$title"
 }
 
@@ -67,7 +67,7 @@ function configuare_zsh {
 function configuare_powerlevel10k {
     title="configuare powerlevel10k"
     print_step $1 "$title"
-    curl -fsSL https://raw.githubusercontent.com/alfredotang/dotfiles/master/macOS/.p10k.zsh > ~/.p10k.zsh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.p10k.zsh > ~/.p10k.zsh
 
     success "$title"
 }
