@@ -1,32 +1,33 @@
 [user]
 	name = Timothy Liao
-	email = s446424@sinyi.com.tw
+	email = tim80411@oneclass.tw
 [core]
 	excludesfile = /Users/liaoyiting/.gitignore_global
 [commit]
 	template = /Users/liaoyiting/.stCommitMsg
 [alias]
-        lg = "!git log --graph --abbrev-commit --decorate"
-        lo = "!git log --graph --abbrev-commit --decorate --oneline"
-        loh = "!f() { git log --graph --abbrev-commit --decorate --oneline ...HEAD~$1; };"
-        st = stash
-				stu = "!git stash push -u"
-				stp = "!f() { git stash pop stash@{$1}; }; f"
-        fe = fetch
-        rsmh = "!git reset HEAD^"
-				adog = log --all --decorate --oneline --graph
-        ch = checkout
-				chb = "!f() { git ch -b feature/v$1/$2; }; f"
-				ch-d = "!git ch develop"
-				ch-d2 = "!git ch develop2"
-				puh = "!git push origin HEAD"
-				b = branch
-				bmc = "!f() { git b -m $(git b --show-current)$1; }; f"
-				rb = rebase
-				rb-d = "!git rb develop"
-				rbc = "!git rb --continue"
-				p = pull
-				p-d = "!git p origin develop:develop"
-				co = commit
-				com = "!git add . && git co -m"
-				comlcb = "" 
+  lg = "!git log --graph --abbrev-commit --decorate"
+  lo = "!git log --graph --abbrev-commit --decorate --oneline"
+  loh = "!f() { git log --graph --abbrev-commit --decorate --oneline ...HEAD~$1; };"
+  st = stash
+  stu = "!git stash push -u"
+  stp = "!f() { git stash pop stash@{$1}; }; f"
+  fe = fetch
+  rsmh = "!git reset HEAD^"
+  adog = log --all --decorate --oneline --graph
+  ch = checkout
+  chb = "!f() { git ch -b feature/$1; }; f"
+  ch-d = "!git ch dev"
+  ch-d2 = "!git ch develop2"
+  puh = "!git push origin HEAD"
+  b = branch
+  bmc = "!f() { git b -m $(git b --show-current)$1; }; f"
+  rb = rebase
+  rb-d = "!git rb develop"
+  rbc = "!git rb --continue"
+  p = pull
+  p-d = "!git p origin develop:develop"
+  co = commit
+  com = "!git add . && git co -m"
+  comm = "!f() { branch=$(git b --show-current); version=${branch#*/}; git add . && git commit -m \"$1 ($version $2)\"; }; f"
+  comlcb = "" 
