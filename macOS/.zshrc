@@ -86,6 +86,6 @@ alias defaultBrowserOpen='open -a $DEFAULT_BROWSER'
 #  ---------------
 # | other setting |
 #  ---------------
-
+export PATH="$PATH":/opt/homebrew/bin
 
 # ------- END -------

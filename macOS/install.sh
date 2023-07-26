@@ -90,14 +90,21 @@ function configure_git {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.gitconfig > ~/.gitconfig
 }
 
-# setting git
+# setting docker-compose
 function configure_docker_compose {
     title="configure docker-compose basic"
     print_step $1 "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/docker-compose.yml > ~/docker-compose.yml
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh" "configure_docker_compose")
+# setting ssh config
+function configure_ssh_config {
+    title="configure ssh config"
+    print_step $1 "$title"
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/sshConfig > ~/.ssh/config
+}
+
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh" "configure_docker_compose configure_ssh_config")
 
 len=${#install_step[*]}
 
