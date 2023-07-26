@@ -40,6 +40,7 @@ function install_homebrew {
     title="Install Homebrew"
     print_step $1 "$title"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    export PATH=$PATH:/opt/homebrew/bin
 
     success "$title"
 }
@@ -89,7 +90,14 @@ function configure_git {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.gitconfig > ~/.gitconfig
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh")
+# setting git
+function configure_docker_compose {
+    title="configure docker-compose basic"
+    print_step $1 "$title"
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/docker-compose.yml > ~/docker-compose.yml
+}
+
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh" "configure_docker_compose")
 
 len=${#install_step[*]}
 

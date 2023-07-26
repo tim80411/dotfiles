@@ -33,6 +33,9 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 # zsh vim
 antigen bundle jeffreytse/zsh-vi-mode
 
+# zsh z
+antigen bundle agkozak/zsh-z
+
 # 套用 antigen 設定
 antigen apply
 

@@ -1,0 +1,44 @@
+version: "3.1"
+
+services:
+  # Use root/example as user/password credentials
+  mongo:
+    image: mongo:6.0
+    container_name: oneclass-mongo-1
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodata:/data/db
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+  sql:
+    image: mysql:8
+    container_name: oneclass-sql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - sqldata:/data/db/var/lib/mysql
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8087:8080
+    
+volumes:
+  mongodata:
+  sqldata:
