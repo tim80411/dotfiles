@@ -104,7 +104,14 @@ function configure_ssh_config {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/sshConfig > ~/.ssh/config
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh" "configure_docker_compose configure_ssh_config")
+# setting vim config
+function configure_vim_config {
+    title="configure vim config"
+    print_step $1 "$title"
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.vimrc > ~/.vimrc
+}
+
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh" "configure_docker_compose configure_ssh_config" "configure_vim_config")
 
 len=${#install_step[*]}
 
