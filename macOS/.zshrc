@@ -1,5 +1,5 @@
 # p10k config source
-[[! -f ~/.p10k.zsh]] || source ~/.p10k.zsh
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Terminal 中的 Report terminal type 改為 xterm-256color 
 export TERM='xterm-256color'
