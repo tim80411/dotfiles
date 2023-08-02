@@ -111,7 +111,7 @@ function configure_vim_config {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.vimrc > ~/.vimrc
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "setup_default_use_zsh" "configure_docker_compose configure_ssh_config" "configure_vim_config")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose configure_ssh_config" "configure_vim_config" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
