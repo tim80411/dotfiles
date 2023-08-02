@@ -77,7 +77,7 @@ function configuare_powerlevel10k {
 function setup_default_use_zsh {
     title="setup default use zsh"
     print_step $1 "$title"
-    hsh -s /bin/zsh
+    chsh -s /bin/zsh
     zsh
 
     success "$title"
