@@ -95,6 +95,7 @@ function configure_docker_compose {
     title="configure docker-compose basic"
     print_step $1 "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/docker-compose.yml > ~/docker-compose.yml
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/mongo_setup.sh > ~/mongo_setup.sh
 }
 
 # setting ssh config
