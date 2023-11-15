@@ -44,6 +44,16 @@ services:
       nofile:
         soft: 20000
         hard: 40000
+
+  postgre:
+    image: postgres:16
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - sqldata:/data/db/var/lib/mysql
+    environment:
+      POSTGRES_PASSWORD: example
   
   kafka:
     image: 'bitnami/kafka:latest'
@@ -66,3 +76,4 @@ services:
 volumes:
   mongodata:
   sqldata:
+  postgredata:
