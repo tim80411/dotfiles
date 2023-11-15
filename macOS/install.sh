@@ -96,6 +96,7 @@ function configure_docker_compose {
     print_step $1 "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/docker-compose.yml > ~/docker-compose.yml
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/mongo_setup.sh > ~/mongo_setup.sh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/init.sh > ~/init.sh
 }
 
 # setting ssh config
@@ -112,7 +113,14 @@ function configure_vim_config {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.vimrc > ~/.vimrc
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose configure_ssh_config" "configure_vim_config" "setup_default_use_zsh")
+function init_service {
+    title="init service"
+    print_step $1 "$title"
+    chmod +x ~/init.sh
+    ~/init.sh
+}
+
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose configure_ssh_config" "configure_vim_config" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
