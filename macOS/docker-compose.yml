@@ -22,7 +22,8 @@ services:
   # for only executing mongo scripts
   mongosetup:
     image: mongo:6.0
-    network_mode: host
+    environment:
+      - HOSTNAME=${HOST_HOSTNAME}
     depends_on:
       - mongo
     volumes:

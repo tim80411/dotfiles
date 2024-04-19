@@ -2,9 +2,9 @@
 echo "sleeping for 5 seconds"
 sleep 5
 
-# 為了確保mongo彼此都知道Domain Name，mongo的networkMode要設定為host
+# host需填寫hostname，原因是若使用docker network，本機無法解讀，需要取得hostname可用hostname -s
 echo mongo_setup.sh time now: `date +"%T" `
-HOSTNAME=$(hostname -s)
+echo hostname: $HOSTNAME
 mongosh --host $HOSTNAME:27017 <<EOF
   var cfg = {
     "_id": "rs0",
@@ -17,5 +17,7 @@ mongosh --host $HOSTNAME:27017 <<EOF
       }
     ]
   };
-  rs.initiate(cfg, { force: true });
+  rs.initiate(cfg)
+  rs.reconfig(cfg, {force: true});
+  db.getSiblingDB('admin').createUser({user: 'root', pwd: 'example', roles: [{role: 'root', db: 'admin'}]})
 EOF
