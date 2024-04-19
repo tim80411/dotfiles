@@ -53,7 +53,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 #  ---------------
 # |   variables   |
 #  ---------------
-DEFAULT_BROWSER="Google Chrome"
+DEFAULT_BROWSER="Arc"
 
 # ------- END -------
 
@@ -74,7 +74,7 @@ alias egit="vim ~/.gitconfig"
 alias evim="vim ~/.vimrc"
 alias essh="vim ~/.ssh/config"
 alias ehost="vim /etc/hosts"
-alias ls="exa --icons"
+alias ls="lsd"
 
 # open browser
 alias chrome='open -a "Google Chrome"'

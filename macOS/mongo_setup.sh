@@ -16,5 +16,5 @@ mongosh --host $HOSTNAME:27017 <<EOF
       }
     ]
   };
-  rs.initiate();
+  rs.initiate(cfg, { force: true });
 EOF
