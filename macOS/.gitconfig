@@ -29,5 +29,5 @@
   p-d = "!git p origin develop:develop"
   co = commit
   com = "!git add . && git co -m"
-  comm = "!f() { branch=$(git b --show-current); version=${branch#*/}; git add . && git commit -m \"$1 ($version $2)\"; }; f"
+  comm = "!f() { branch=$(git b --show-current); version=${branch#*/}; git add . && git commit -m \"$1 (#$version)\"; }; f"
   comlcb = "" 
