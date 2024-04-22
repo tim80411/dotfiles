@@ -7,4 +7,4 @@ HOSTNAME=$(hostname)
 export HOSTNAME
 
 # 運行 docker-compose
-docker-compose up mongosetup
+docker-compose up -d 
