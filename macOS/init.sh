@@ -8,3 +8,4 @@ export HOSTNAME
 
 # 運行 docker-compose
 docker-compose up -d 
+
