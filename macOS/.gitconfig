@@ -18,6 +18,7 @@
   ch = checkout
   chb = "!f() { git ch -b feature/$1; }; f"
   ch-d = "!git ch dev"
+  ch-dp = "!git ch dev && git pull origin dev"
   ch-d2 = "!git ch develop2"
   puh = "!git push origin HEAD"
   b = branch

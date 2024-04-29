@@ -36,4 +36,5 @@ cask "slack"
 cask "raycast"
 cask "grammarly-desktop"
 cask "arc"
+cask "shottr"
 mas "LINE", id: 539883307
