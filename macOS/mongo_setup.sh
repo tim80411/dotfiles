@@ -2,22 +2,21 @@
 echo "sleeping for 5 seconds"
 sleep 5
 
-# host需填寫hostname，原因是若使用docker network，本機無法解讀，需要取得hostname可用hostname -s
+# 直接使用mongo作為domain連結
 echo mongo_setup.sh time now: `date +"%T" `
-echo hostname: $HOSTNAME
-mongosh --host $HOSTNAME:27017 <<EOF
+echo hostname: mongo
+mongosh --host mongo:27017 <<EOF
   var cfg = {
     "_id": "rs0",
     "version": 1,
     "members": [
       {
         "_id": 0,
-        "host": "$HOSTNAME:27017",
+        "host": "mongo:27017",
         "priority": 2
       }
     ]
   };
   rs.initiate(cfg)
-  rs.reconfig(cfg, {force: true});
   db.getSiblingDB('admin').createUser({user: 'root', pwd: 'example', roles: [{role: 'root', db: 'admin'}]})
 EOF
