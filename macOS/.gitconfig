@@ -24,11 +24,16 @@
   b = branch
   bmc = "!f() { git b -m $(git b --show-current)$1; }; f"
   rb = rebase
-  rb-d = "!git rb develop"
+  rb-d = "!git rb dev"
   rbc = "!git rb --continue"
   p = pull
   p-d = "!git p origin develop:develop"
   co = commit
   com = "!git add . && git co -m"
-  comm = "!f() { branch=$(git b --show-current); version=${branch#*/}; git add . && git commit -m \"$1 (#$version)\"; }; f"
+  comm = "!sh -c 'branch=$(git branch --show-current); version=${branch#*/}; version=${version%-*-*}; git add . && git commit -m \"$1 (#$version)\"' -"
   comlcb = "" 
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
