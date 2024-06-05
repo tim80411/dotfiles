@@ -113,6 +113,13 @@ function configure_vim_config {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.vimrc > ~/.vimrc
 }
 
+# setting redis config
+function configure_redis_config {
+    title="configure redis config"
+    print_step $1 "$title"
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/redis.conf > ~/redis.conf
+}
+
 function init_service {
     title="init service"
     print_step $1 "$title"

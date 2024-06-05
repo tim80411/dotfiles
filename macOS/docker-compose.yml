@@ -56,6 +56,14 @@ services:
       - sqldata:/data/db/var/lib/mysql
     environment:
       POSTGRES_PASSWORD: example
+
+  # https://redis.io/learn/operate/redis-at-scale/talking-to-redis/configuring-a-redis-server
+  redis:
+    image: redis:7.2
+    restart: always
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
   
   kafka:
     image: 'bitnami/kafka:latest'
