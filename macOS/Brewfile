@@ -42,4 +42,5 @@ cask "raycast"
 cask "grammarly-desktop"
 cask "arc"
 cask "shottr"
+cask "tableplus"
 mas "LINE", id: 539883307
