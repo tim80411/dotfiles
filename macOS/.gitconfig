@@ -16,9 +16,9 @@
   rsmh = "!git reset HEAD^"
   adog = log --all --decorate --oneline --graph
   ch = checkout
-  chb = "!f() { git ch -b feature/$1; }; f"
+  chb = "!f() { git ch -b features/$1; }; f"
   ch-d = "!git ch dev"
-  ch-dp = "!git ch dev && git pull origin dev"
+  ch-dp = "!git ch dev && git fe && git pull origin dev"
   ch-d2 = "!git ch develop2"
   puh = "!git push origin HEAD"
   b = branch
@@ -30,10 +30,12 @@
   p-d = "!git p origin develop:develop"
   co = commit
   com = "!git add . && git co -m"
-  comm = "!sh -c 'branch=$(git branch --show-current); version=${branch#*/}; version=${version%-*-*}; git add . && git commit -m \"$1 (#$version)\"' -"
-  comlcb = "" 
+  comm="!sh -c 'branch=$(git branch --show-current); version=$(echo $branch | grep -oE \"[A-Z0-9]+-[0-9]+\" | head -1); git add . && git commit -m \"$1 (#$version)\"' -"
+  contain = "!f() { git branch --contains $1; }; f"
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[credential]
+	helper = cache

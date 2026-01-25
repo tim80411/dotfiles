@@ -11,6 +11,9 @@ source /opt/homebrew/opt/antigen/share/antigen/antigen.zsh
 # Disable Homebrew Auto update
 export HOMEBREW_NO_AUTO_UPDATE=1
 
+# SVN
+export SVN_EDITOR=vim
+
 #  -----------------
 # | antigen setting |
 #  -----------------
@@ -74,6 +77,7 @@ alias egit="vim ~/.gitconfig"
 alias evim="vim ~/.vimrc"
 alias essh="vim ~/.ssh/config"
 alias ehost="vim /etc/hosts"
+alias ecompose="vim ~/docker-compose.yml"
 alias ls="lsd"
 
 # open browser
