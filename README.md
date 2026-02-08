@@ -1,11 +1,45 @@
 # dotFiles
-## description
+## Description
 **fork from Alfredo**
 
-adapt self setting
+Adapt self setting for macOS and Ubuntu.
 
-## demo
+## Demo
 ![alfredo-iTern-demo](./images/alfredo-iTern-demo.png)
+
+---
+
+## Ubuntu 24.04+
+### 1. Install
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/ubuntu/install.sh)"
+```
+
+This script will automatically:
+- Update system packages
+- Install Zsh and set as default shell
+- Install Oh My Zsh
+- Install Powerlevel10k theme
+- Install zsh-autosuggestions and zsh-syntax-highlighting plugins
+- Install Hack Nerd Font
+- Copy configuration files
+
+### 2. Setting Terminal Font
+
+After installation, configure your terminal emulator to use `Hack Nerd Font`.
+
+**GNOME Terminal:**
+1. Open Terminal Preferences
+2. Go to Profiles -> Your Profile -> Text
+3. Check "Custom font" and select `Hack Nerd Font Mono`
+
+### 3. Customize Prompt (Optional)
+
+Run `p10k configure` to customize your Powerlevel10k prompt.
+
+---
+
 ## macOS
 ### 1. `install.sh`
    
