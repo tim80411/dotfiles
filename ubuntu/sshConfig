@@ -1,0 +1,11 @@
+Host bitbucket.org
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
+
+Host github.com
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
+
+Host *
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
