@@ -64,3 +64,6 @@ export NVM_DIR="$HOME/.nvm"
 
 # Load Powerlevel10k config
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Homebrew
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null
