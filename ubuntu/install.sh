@@ -26,10 +26,10 @@ sudo apt install -y \
     unzip \
     software-properties-common
 
-# Install Zsh and set as default shell
+# Set Zsh as default shell (using usermod to avoid interactive password prompt)
 echo "[3/8] Setting Zsh as default shell..."
 if [ "$SHELL" != "$(which zsh)" ]; then
-    chsh -s $(which zsh)
+    sudo usermod -s $(which zsh) $USER
 fi
 
 # Install Oh My Zsh
