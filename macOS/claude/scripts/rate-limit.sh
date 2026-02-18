@@ -41,18 +41,45 @@ data=$(cat "$CACHE_FILE")
 five_h=$(echo "$data" | jq -r '.five_hour.utilization // empty')
 five_reset=$(echo "$data" | jq -r '.five_hour.resets_at // empty')
 seven_d=$(echo "$data" | jq -r '.seven_day.utilization // empty')
+seven_reset=$(echo "$data" | jq -r '.seven_day.resets_at // empty')
 
-# Calculate time until reset
-reset_str=""
-if [ -n "$five_reset" ] && [ "$five_reset" != "null" ]; then
-  reset_ts=$(date -jf "%Y-%m-%dT%H:%M:%S" \
-    "$(echo "$five_reset" | sed 's/\..*//' | sed 's/+.*//')" +%s 2>/dev/null || echo "")
-  if [ -n "$reset_ts" ]; then
-    diff=$(( reset_ts - $(date +%s) ))
-    if [ "$diff" -gt 0 ]; then
-      reset_str=" (reset $((diff/3600))h$(( (diff%3600)/60 ))m)"
-    fi
+# Parse ISO 8601 UTC timestamp to epoch seconds
+parse_utc_ts() {
+  local iso="$1"
+  local stripped
+  stripped=$(echo "$iso" | sed 's/\..*//' | sed 's/+.*//' | sed 's/Z$//')
+  # Parse as UTC by using -u flag
+  date -ju -f "%Y-%m-%dT%H:%M:%S" "$stripped" +%s 2>/dev/null || echo ""
+}
+
+# Format remaining time from seconds
+fmt_remaining() {
+  local diff=$1
+  if [ "$diff" -le 0 ]; then echo ""; return; fi
+  local d=$((diff / 86400))
+  local h=$(( (diff % 86400) / 3600 ))
+  local m=$(( (diff % 3600) / 60 ))
+  if [ "$d" -gt 0 ]; then
+    echo " (reset ${d}d${h}h)"
+  else
+    echo " (reset ${h}h${m}m)"
   fi
+}
+
+now=$(date +%s)
+
+# Calculate time until 5h reset
+five_reset_str=""
+if [ -n "$five_reset" ] && [ "$five_reset" != "null" ]; then
+  five_reset_ts=$(parse_utc_ts "$five_reset")
+  [ -n "$five_reset_ts" ] && five_reset_str=$(fmt_remaining $(( five_reset_ts - now )))
+fi
+
+# Calculate time until 7d reset
+seven_reset_str=""
+if [ -n "$seven_reset" ] && [ "$seven_reset" != "null" ]; then
+  seven_reset_ts=$(parse_utc_ts "$seven_reset")
+  [ -n "$seven_reset_ts" ] && seven_reset_str=$(fmt_remaining $(( seven_reset_ts - now )))
 fi
 
 # ANSI colors based on utilization level
@@ -66,7 +93,7 @@ RST='\033[0m'
 DIM='\033[2m'
 
 output=""
-[ -n "$five_h" ] && output+="$(color $five_h)5h: ${five_h}%${RST}${DIM}${reset_str}${RST}"
-[ -n "$seven_d" ] && output+=" | $(color $seven_d)7d: ${seven_d}%${RST}"
+[ -n "$five_h" ] && output+="$(color $five_h)5h: ${five_h}%${RST}${DIM}${five_reset_str}${RST}"
+[ -n "$seven_d" ] && output+=" | $(color $seven_d)7d: ${seven_d}%${RST}${DIM}${seven_reset_str}${RST}"
 
 printf "%b\n" "$output"
