@@ -120,6 +120,28 @@ function configure_redis_config {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/redis.conf > ~/redis.conf
 }
 
+# install and configure ccstatusline
+function configure_ccstatusline {
+    title="configure ccstatusline"
+    print_step $1 "$title"
+    npm install -g ccstatusline
+    mkdir -p ~/.config/ccstatusline
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/ccstatusline/settings.json > ~/.config/ccstatusline/settings.json
+
+    success "$title"
+}
+
+# setting claude rate-limit script
+function configure_claude_scripts {
+    title="configure claude scripts"
+    print_step $1 "$title"
+    mkdir -p ~/.claude/scripts
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/scripts/rate-limit.sh > ~/.claude/scripts/rate-limit.sh
+    chmod +x ~/.claude/scripts/rate-limit.sh
+
+    success "$title"
+}
+
 function init_service {
     title="init service"
     print_step $1 "$title"
@@ -127,7 +149,7 @@ function init_service {
     ~/init.sh
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose configure_ssh_config" "configure_vim_config" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_ccstatusline" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
