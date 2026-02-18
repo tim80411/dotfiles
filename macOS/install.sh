@@ -142,6 +142,24 @@ function configure_claude_scripts {
     success "$title"
 }
 
+# configure tmux
+function configure_tmux {
+    title="configure tmux"
+    print_step $1 "$title"
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.tmux.conf > ~/.tmux.conf
+    success "$title"
+}
+
+# configure claude notify script
+function configure_claude_notify {
+    title="configure claude notify script"
+    print_step $1 "$title"
+    mkdir -p ~/.claude
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/notify_mobile.sh > ~/.claude/notify_mobile.sh
+    chmod +x ~/.claude/notify_mobile.sh
+    success "$title"
+}
+
 function init_service {
     title="init service"
     print_step $1 "$title"
@@ -149,7 +167,7 @@ function init_service {
     ~/init.sh
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_ccstatusline" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_tmux" "configure_claude_notify" "configure_ccstatusline" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
