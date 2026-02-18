@@ -1,0 +1,51 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "model": "opus",
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/notify_mobile.sh 'Claude 等待中' '需要您的輸入或確認' 4"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/notify_mobile.sh '任務完成' 'Claude 已結束工作' 3"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bunx -y ccstatusline@latest",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "feature-dev@claude-code-plugins": true,
+    "hookify@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": true,
+    "pr-review-toolkit@claude-code-plugins": true,
+    "ralph-wiggum@claude-code-plugins": true,
+    "superpowers@claude-plugins-official": true,
+    "superpowers@superpowers-marketplace": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "unit-testing@claude-code-workflows": false,
+    "figma-reader@timothy-liao-marketplace": true,
+    "animate-dev@timothy-liao-marketplace": true
+  },
+  "effortLevel": "medium"
+}

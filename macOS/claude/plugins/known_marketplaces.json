@@ -1,0 +1,36 @@
+{
+  "claude-code-plugins": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-code"
+    },
+    "installLocation": "__HOME__/.claude/plugins/marketplaces/claude-code-plugins",
+    "lastUpdated": "2026-02-18T07:57:47.415Z"
+  },
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "__HOME__/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-02-18T08:39:33.903Z"
+  },
+  "superpowers-marketplace": {
+    "source": {
+      "source": "github",
+      "repo": "obra/superpowers-marketplace"
+    },
+    "installLocation": "__HOME__/.claude/plugins/marketplaces/superpowers-marketplace",
+    "lastUpdated": "2026-02-16T14:47:38.132Z",
+    "autoUpdate": true
+  },
+  "timothy-liao-marketplace": {
+    "source": {
+      "source": "git",
+      "url": "https://github.com/tim80411/ai-agent-extension.git"
+    },
+    "installLocation": "__HOME__/.claude/plugins/marketplaces/timothy-liao-marketplace",
+    "lastUpdated": "2026-02-18T09:18:04.344Z",
+    "autoUpdate": true
+  }
+}

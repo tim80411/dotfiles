@@ -1,0 +1,157 @@
+{
+  "version": 2,
+  "plugins": {
+    "ralph-wiggum@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-code-plugins/ralph-wiggum/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-06T02:28:42.080Z",
+        "lastUpdated": "2026-01-06T02:28:42.080Z"
+      }
+    ],
+    "pr-review-toolkit@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-code-plugins/pr-review-toolkit/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-06T02:31:37.439Z",
+        "lastUpdated": "2026-01-06T02:31:37.439Z"
+      }
+    ],
+    "feature-dev@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-code-plugins/feature-dev/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-06T03:51:15.975Z",
+        "lastUpdated": "2026-01-06T03:51:15.975Z"
+      }
+    ],
+    "typescript-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/typescript-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-08T09:25:28.179Z",
+        "lastUpdated": "2026-01-08T09:25:28.179Z"
+      }
+    ],
+    "context7@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/context7/261ce4fba4f2",
+        "version": "261ce4fba4f2",
+        "installedAt": "2026-01-08T09:29:28.489Z",
+        "lastUpdated": "2026-02-18T05:13:35.303Z"
+      }
+    ],
+    "unit-testing@claude-code-workflows": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-code-workflows/unit-testing/1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-01-08T09:30:48.269Z",
+        "lastUpdated": "2026-01-08T09:30:48.269Z"
+      }
+    ],
+    "hookify@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/hookify/261ce4fba4f2",
+        "version": "261ce4fba4f2",
+        "installedAt": "2026-01-09T01:50:10.504Z",
+        "lastUpdated": "2026-02-18T05:13:35.311Z"
+      }
+    ],
+    "code-simplifier@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-12T07:52:58.346Z",
+        "lastUpdated": "2026-01-12T07:52:58.346Z"
+      }
+    ],
+    "plugin-dev@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/plugin-dev/261ce4fba4f2",
+        "version": "261ce4fba4f2",
+        "installedAt": "2026-01-14T03:39:12.508Z",
+        "lastUpdated": "2026-02-18T05:13:35.300Z",
+        "gitCommitSha": "f70b65538da094ff474a855e7a679fb2c2c8064f"
+      }
+    ],
+    "code-review@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/code-review/261ce4fba4f2",
+        "version": "261ce4fba4f2",
+        "installedAt": "2026-01-16T05:21:22.312Z",
+        "lastUpdated": "2026-02-18T05:13:35.305Z",
+        "gitCommitSha": "96276205880a60fd66bbae981f5ab568e70c4cbf"
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/superpowers/4.3.0",
+        "version": "4.3.0",
+        "installedAt": "2026-01-20T05:26:39.964Z",
+        "lastUpdated": "2026-02-13T01:37:33.275Z",
+        "gitCommitSha": "a01a135fe185559ff9dc84dd70d6e9bb57d92bdf"
+      }
+    ],
+    "superpowers@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/superpowers-marketplace/superpowers/4.3.0",
+        "version": "4.3.0",
+        "installedAt": "2026-01-23T08:25:30.615Z",
+        "lastUpdated": "2026-02-13T01:37:33.319Z",
+        "gitCommitSha": "35d4fbcd0b31485d9a55f0ba96a51ae7fe78d382"
+      }
+    ],
+    "commit-commands@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/commit-commands/261ce4fba4f2",
+        "version": "261ce4fba4f2",
+        "installedAt": "2026-01-25T09:37:03.732Z",
+        "lastUpdated": "2026-02-18T05:13:35.303Z",
+        "gitCommitSha": "e30768372b4150ca1bc0839d93283e8edc30d60d"
+      }
+    ],
+    "animate-dev@timothy-liao-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/animate-dev/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-26T13:56:33.070Z",
+        "lastUpdated": "2026-01-26T13:56:33.070Z",
+        "gitCommitSha": "08f4f91585e194839633c5529cc2090c2b71d9ba"
+      }
+    ],
+    "figma@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/figma/1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-01-29T09:56:05.190Z",
+        "lastUpdated": "2026-02-12T04:27:33.418Z",
+        "gitCommitSha": "20aca44ee6ba6092037e943c151c067896828360"
+      }
+    ],
+    "figma-reader@timothy-liao-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/figma-reader/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-02-02T08:02:17.597Z",
+        "lastUpdated": "2026-02-02T08:02:17.597Z",
+        "gitCommitSha": "4ec8e428709f0077a660147a75385b901ae92db2"
+      }
+    ]
+  }
+}
