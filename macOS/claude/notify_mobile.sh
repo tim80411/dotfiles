@@ -16,7 +16,9 @@ curl -s \
   -d "$MESSAGE" \
   "https://ntfy.sh/$TOPIC" > /dev/null 2>&1 &
 
-# 推送到本地 (電腦端 macOS)
-if [[ "$(uname)" == "Darwin" ]]; then
+# 推送到本地 (電腦端 macOS) — 點擊通知跳回 iTerm
+if [[ "$(uname)" == "Darwin" ]] && command -v terminal-notifier &>/dev/null; then
+  terminal-notifier -title "$TITLE" -message "$MESSAGE" -activate com.googlecode.iterm2 -sound default &>/dev/null &
+elif [[ "$(uname)" == "Darwin" ]]; then
   osascript -e "display notification \"$MESSAGE\" with title \"$TITLE\"" 2>/dev/null
 fi

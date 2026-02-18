@@ -181,6 +181,20 @@ function configure_claude_notify {
     success "$title"
 }
 
+# configure TCIM auto-restart (fix input method freeze)
+function configure_tcim_restart {
+    title="configure tcim auto-restart"
+    print_step $1 "$title"
+    mkdir -p ~/bin
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/tcim/restart-tcim.sh > ~/bin/restart-tcim.sh
+    chmod +x ~/bin/restart-tcim.sh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/tcim/com.local.restart-tcim.plist | sed "s|__HOME__|$HOME|g" > ~/Library/LaunchAgents/com.local.restart-tcim.plist
+    launchctl unload ~/Library/LaunchAgents/com.local.restart-tcim.plist 2>/dev/null
+    launchctl load ~/Library/LaunchAgents/com.local.restart-tcim.plist
+
+    success "$title"
+}
+
 function init_service {
     title="init service"
     print_step $1 "$title"
@@ -188,7 +202,7 @@ function init_service {
     ~/init.sh
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
