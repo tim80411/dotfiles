@@ -147,6 +147,10 @@ function configure_tmux {
     title="configure tmux"
     print_step $1 "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.tmux.conf > ~/.tmux.conf
+    mkdir -p ~/bin
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/tmux/tmux-new.sh > ~/bin/tmux-new.sh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/tmux/tmux-pick.sh > ~/bin/tmux-pick.sh
+    chmod +x ~/bin/tmux-new.sh ~/bin/tmux-pick.sh
     success "$title"
 }
 
