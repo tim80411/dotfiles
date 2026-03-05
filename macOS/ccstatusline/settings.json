@@ -45,6 +45,7 @@
         "id": "f29157be-e0d3-4405-8e26-1ee65b843899",
         "type": "custom-command",
         "rawValue": true,
+        "preserveColors": true,
         "commandPath": "bash ~/.claude/scripts/rate-limit.sh",
         "timeout": 10000
       }
