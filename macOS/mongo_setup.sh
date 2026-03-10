@@ -3,7 +3,7 @@ echo "sleeping for 5 seconds"
 sleep 5
 
 # 直接使用mongo作為domain連結
-echo mongo_setup.sh time now: `date +"%T" `
+echo "mongo_setup.sh time now: $(date +"%T")"
 echo hostname: mongo
 mongosh --host mongo:27017 <<EOF
   var cfg = {

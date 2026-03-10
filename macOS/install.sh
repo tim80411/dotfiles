@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# =========== colro variables =========
+# =========== color variables =========
 COLOR_GRAY="\033[1;38;5;243m"
 COLOR_BLUE="\033[1;34m"
 COLOR_GREEN="\033[1;32m"
@@ -9,10 +9,10 @@ COLOR_PURPLE="\033[1;35m"
 COLOR_YELLOW="\033[1;33m"
 COLOR_NONE="\033[0m"
 
-# ========= utilites function ===========
+# ========= utility functions ===========
 
 function print_out {
-    printf "\n${COLOR_BLUE}info ${COLOR_NONE}canel\n"
+    printf "\n${COLOR_BLUE}info ${COLOR_NONE}cancelled\n"
     exit
 }
 
@@ -27,7 +27,7 @@ function error {
 
 
 function print_step {
-    printf "\n${COLOR_PURPLE}step $1/$len  ${COLOR_YELLOW}$2"
+    printf "\n${COLOR_PURPLE}step %s/%s  ${COLOR_YELLOW}%s" "$1" "$len" "$2"
     printf "\n${COLOR_GRAY}=====================================${COLOR_NONE}\n"
 }
 
@@ -38,7 +38,7 @@ trap print_out SIGTERM SIGINT SIGHUP
 # Install homebrew
 function install_homebrew {
     title="Install Homebrew"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     export PATH=$PATH:/opt/homebrew/bin
 
@@ -48,7 +48,7 @@ function install_homebrew {
 # Install APP by homebrew
 function install_homebrew_dependencies {
     title="Install Homebrew dependencies"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/Brewfile > /tmp/Brewfile  
     brew bundle --file /tmp/Brewfile  
     rm /tmp/Brewfile
@@ -56,29 +56,28 @@ function install_homebrew_dependencies {
     success "$title"
 }
 
-# Setting zsh 
-function configuare_zsh {
-    title="configuare zsh"
-    print_step $1 "$title"
+# Setting zsh
+function configure_zsh {
+    title="configure zsh"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zshrc > ~/.zshrc
     success "$title"
 }
 
 # Setting zsh theme by powerlevel10k
-function configuare_powerlevel10k {
-    title="configuare powerlevel10k"
-    print_step $1 "$title"
+function configure_powerlevel10k {
+    title="configure powerlevel10k"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.p10k.zsh > ~/.p10k.zsh
 
     success "$title"
 }
 
-# Setup zsh to deafault shell
+# Setup zsh as default shell
 function setup_default_use_zsh {
     title="setup default use zsh"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     chsh -s /bin/zsh
-    zsh
 
     success "$title"
 }
@@ -86,44 +85,49 @@ function setup_default_use_zsh {
 # setting git
 function configure_git {
     title="configure git"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.gitconfig > ~/.gitconfig
+    success "$title"
 }
 
 # setting docker-compose
 function configure_docker_compose {
     title="configure docker-compose basic"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/docker-compose.yml > ~/docker-compose.yml
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/mongo_setup.sh > ~/mongo_setup.sh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/init.sh > ~/init.sh
+    success "$title"
 }
 
 # setting ssh config
 function configure_ssh_config {
     title="configure ssh config"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/sshConfig > ~/.ssh/config
+    success "$title"
 }
 
 # setting vim config
 function configure_vim_config {
     title="configure vim config"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.vimrc > ~/.vimrc
+    success "$title"
 }
 
 # setting redis config
 function configure_redis_config {
     title="configure redis config"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/redis.conf > ~/redis.conf
+    success "$title"
 }
 
 # install and configure ccstatusline
 function configure_ccstatusline {
     title="configure ccstatusline"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     npm install -g ccstatusline
     mkdir -p ~/.config/ccstatusline
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/ccstatusline/settings.json > ~/.config/ccstatusline/settings.json
@@ -134,7 +138,7 @@ function configure_ccstatusline {
 # setting claude rate-limit script
 function configure_claude_scripts {
     title="configure claude scripts"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     mkdir -p ~/.claude/scripts
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/scripts/rate-limit.sh > ~/.claude/scripts/rate-limit.sh
     chmod +x ~/.claude/scripts/rate-limit.sh
@@ -142,10 +146,19 @@ function configure_claude_scripts {
     success "$title"
 }
 
+# configure ghostty
+function configure_ghostty {
+    title="configure ghostty"
+    print_step "$1" "$title"
+    mkdir -p ~/.config/ghostty
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/ghostty/config > ~/.config/ghostty/config
+    success "$title"
+}
+
 # configure tmux
 function configure_tmux {
     title="configure tmux"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.tmux.conf > ~/.tmux.conf
     mkdir -p ~/bin
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/tmux/tmux-new.sh > ~/bin/tmux-new.sh
@@ -157,7 +170,7 @@ function configure_tmux {
 # configure claude settings
 function configure_claude_settings {
     title="configure claude settings"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     mkdir -p ~/.claude
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/settings.json > ~/.claude/settings.json
 
@@ -167,7 +180,7 @@ function configure_claude_settings {
 # configure claude plugins
 function configure_claude_plugins {
     title="configure claude plugins"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     mkdir -p ~/.claude/plugins
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/plugins/installed_plugins.json | sed "s|__HOME__|$HOME|g" > ~/.claude/plugins/installed_plugins.json
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/plugins/known_marketplaces.json | sed "s|__HOME__|$HOME|g" > ~/.claude/plugins/known_marketplaces.json
@@ -178,7 +191,7 @@ function configure_claude_plugins {
 # configure claude notify script
 function configure_claude_notify {
     title="configure claude notify script"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     mkdir -p ~/.claude
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/notify_mobile.sh > ~/.claude/notify_mobile.sh
     chmod +x ~/.claude/notify_mobile.sh
@@ -188,7 +201,7 @@ function configure_claude_notify {
 # configure TCIM auto-restart (fix input method freeze)
 function configure_tcim_restart {
     title="configure tcim auto-restart"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     mkdir -p ~/bin
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/tcim/restart-tcim.sh > ~/bin/restart-tcim.sh
     chmod +x ~/bin/restart-tcim.sh
@@ -201,26 +214,20 @@ function configure_tcim_restart {
 
 function init_service {
     title="init service"
-    print_step $1 "$title"
+    print_step "$1" "$title"
     chmod +x ~/init.sh
     ~/init.sh
+    success "$title"
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configuare_zsh" "configuare_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_ghostty" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
 
 # ================= main function ========================
-try
-(
-    for step in ${!install_step[@]}; do
-    
-        ${install_step[$step]} `expr $step + 1`
-   
-    
-    done
-)
-cache || {
-    error "Error" SIGTERM SIGINT SIGHUP
-}
+for step in "${!install_step[@]}"; do
+    ${install_step[$step]} $(( step + 1 )) || {
+        error "Failed at step $(( step + 1 )): ${install_step[$step]}"
+    }
+done

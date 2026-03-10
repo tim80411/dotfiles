@@ -17,6 +17,7 @@ macOS/          # macOS-specific configs
   .gitconfig    # Git aliases and settings
   .vimrc        # Vim settings
   .p10k.zsh     # Powerlevel10k theme config
+  ghostty/      # Ghostty terminal emulator config
   claude/       # Claude Code settings, plugins, hooks, scripts
   ccstatusline/ # ccstatusline settings
   tcim/         # TCIM input method auto-restart (launchd)

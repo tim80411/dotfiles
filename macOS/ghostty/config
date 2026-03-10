@@ -1,0 +1,52 @@
+# ===========================================
+# Ghostty config — Claude Code optimized
+# ===========================================
+
+# --- Font ---
+# Ghostty 內建 JetBrains Mono + Nerd Font 符號，可不設
+# 如果偏好 Hack，取消下面的註解：
+# font-family = Hack Nerd Font Mono
+font-size = 13
+
+# --- Theme ---
+# 用內建主題取代手動色盤（ghostty +list-themes 查看所有可用主題）
+# 自動跟隨系統明暗模式切換
+theme = Builtin Pastel Dark
+
+# --- Cursor ---
+cursor-style = underline
+cursor-style-blink = false
+
+# --- Window ---
+window-padding-x = 8
+window-padding-y = 8
+
+# --- Behavior ---
+# 新 tab/window 繼承當前工作目錄
+window-inherit-working-directory = true
+
+# 啟動時自動執行 tmux-new.sh（等同 iTerm2 的 profile command）
+command = /Users/tim80411/bin/tmux-new.sh
+
+# 左 Option 鍵送 Meta/Esc+（從 iTerm2 保留的習慣）
+macos-option-as-alt = left
+
+# 桌面通知（Claude Code 任務完成提醒）
+desktop-notifications = true
+
+# --- Claude Code 整合 ---
+# Shift+Enter 多行輸入（Ghostty 預設送 escape sequence，需覆寫為換行）
+keybind = shift+enter=text:\n
+
+# --- 面板導覽（SAND 系統 - Vim 風格）---
+# 用 opt+hjkl 避免與 shell ctrl+l（清螢幕）衝突
+keybind = opt+h=goto_split:left
+keybind = opt+j=goto_split:bottom
+keybind = opt+k=goto_split:top
+keybind = opt+l=goto_split:right
+
+# --- Tab 切換 ---
+# 兩指滑動切換 tab 在 macOS 尚不支援（見 ghostty-org/ghostty#10564）
+# 暫用鍵盤快捷鍵替代
+keybind = cmd+shift+right_bracket=goto_tab:next
+keybind = cmd+shift+left_bracket=goto_tab:previous
