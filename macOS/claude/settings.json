@@ -9,29 +9,19 @@
       "Grep",
       "LS",
       "NotebookRead",
+      "WebSearch",
+      "WebFetch",
       "mcp__pencil"
     ]
   },
   "model": "opus",
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "WebFetch|WebSearch",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo '{\"decision\":\"allow\"}'",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/notify_mobile.sh 'Claude 等待中' '需要您的輸入或確認' 4"
+            "command": "bash ~/.claude/notify_mobile.sh"
           }
         ]
       }
@@ -41,7 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/notify_mobile.sh '任務完成' 'Claude 已結束工作' 3"
+            "command": "bash ~/.claude/notify_mobile.sh"
           }
         ]
       }
@@ -59,15 +49,16 @@
     "context7@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
-    "superpowers@superpowers-marketplace": true,
     "typescript-lsp@claude-plugins-official": true,
-    "unit-testing@claude-code-workflows": false,
     "figma-reader@timothy-liao-marketplace": true,
     "animate-dev@timothy-liao-marketplace": true,
     "spec-writer@timothy-liao-marketplace": true,
     "feature-dev@claude-plugins-official": true,
-    "ralph-loop@claude-plugins-official": true
+    "ralph-loop@claude-plugins-official": true,
+    "sentry@claude-plugins-official": true,
+    "code-quality-review@timothy-liao-marketplace": true,
+    "figma@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
   },
-  "effortLevel": "medium"
+  "fastMode": true
 }

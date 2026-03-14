@@ -34,6 +34,10 @@ macos-option-as-alt = left
 # 桌面通知（Claude Code 任務完成提醒）
 desktop-notifications = true
 
+# --- Link ---
+# 讓連結點擊在程式捕獲滑鼠時仍可用（Cmd+Click 失效時改用 Cmd+Shift+Click）
+link-url = true
+
 # --- Claude Code 整合 ---
 # Shift+Enter 多行輸入（Ghostty 預設送 escape sequence，需覆寫為換行）
 keybind = shift+enter=text:\n
@@ -46,7 +50,4 @@ keybind = opt+k=goto_split:top
 keybind = opt+l=goto_split:right
 
 # --- Tab 切換 ---
-# 兩指滑動切換 tab 在 macOS 尚不支援（見 ghostty-org/ghostty#10564）
-# 暫用鍵盤快捷鍵替代
-keybind = cmd+shift+right_bracket=goto_tab:next
-keybind = cmd+shift+left_bracket=goto_tab:previous
+# Ghostty 預設已有 cmd+shift+[ / cmd+shift+] 切換 tab
