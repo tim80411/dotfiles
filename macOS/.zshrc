@@ -11,7 +11,10 @@ else
 fi
 
 # Terminal 中的 Report terminal type 改為 xterm-256color
-export TERM='xterm-256color'
+# Ghostty 需要保留 xterm-ghostty 以啟用 shell integration
+if [[ "$TERM_PROGRAM" != "ghostty" ]]; then
+  export TERM='xterm-256color'
+fi
 
 # 載入 antigen
 # zsh 的插件管理工具
@@ -142,6 +145,18 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# Ghostty + tmux: 透過 DCS passthrough 送 OSC 7 讓 Ghostty 知道當前目錄
+# 解決新開 Tab/Split 時 working-directory=inherit 無法取得 cwd 的問題
+# 注意：tmux 會把 TERM_PROGRAM 覆蓋為 "tmux"，所以改用 client_termname 偵測
+if [[ -n "$TMUX" ]] && [[ "$(tmux display-message -p '#{client_termname}' 2>/dev/null)" == *ghostty* ]]; then
+  _ghostty_osc7_passthrough() {
+    printf '\ePtmux;\e\e]7;file://%s%s\a\e\\' "${HOST}" "${PWD}"
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook chpwd _ghostty_osc7_passthrough
+  _ghostty_osc7_passthrough  # 初始化時也送一次
+fi
 
 
 
