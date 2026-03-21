@@ -47,7 +47,7 @@ curl -s \
   -H "Tags: computer,warning" \
   -H "Click: ssh://${TAILSCALE_USER}@${TAILSCALE_HOST}" \
   -d "$MESSAGE" \
-  "https://ntfy.sh/$TOPIC" > /dev/null 2>&1 &
+  "https://ntfy.teachers-assist.com/$TOPIC" > /dev/null 2>&1 &
 
 # Ghostty 桌面通知 (OSC 777) — title/body 分開顯示，與原生通知風格一致
 if [ -n "$TMUX" ]; then
