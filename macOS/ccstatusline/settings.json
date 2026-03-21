@@ -47,7 +47,7 @@
         "rawValue": true,
         "preserveColors": true,
         "commandPath": "bash ~/.claude/scripts/rate-limit.sh",
-        "timeout": 10000
+        "timeout": 3000
       }
     ],
     [

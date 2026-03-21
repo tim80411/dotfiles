@@ -11,4 +11,4 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     SESSION_NAME="${PROJECT}_${BRANCH:-detached}_$(date +%H%M%S)"
 fi
 
-exec tmux new-session -s "$SESSION_NAME"
+exec tmux new-session -s "$SESSION_NAME" -c "$PWD"
