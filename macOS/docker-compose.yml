@@ -1,5 +1,3 @@
-version: "3.1"
-
 services:
   # Use root/example as user/password credentials
   mongo:
@@ -23,12 +21,13 @@ services:
   mongosetup:
     image: mongo:6.0
     environment:
-      - HOSTNAME=${HOST_HOSTNAME}
+      - HOSTNAME=${HOSTNAME}
     depends_on:
       - mongo
     volumes:
       - .:/scripts
     restart: "no"
+
     entrypoint: [ "bash", "/scripts/mongo_setup.sh"]
 
   sql:
@@ -57,14 +56,18 @@ services:
     environment:
       POSTGRES_PASSWORD: example
 
+  
   # https://redis.io/learn/operate/redis-at-scale/talking-to-redis/configuring-a-redis-server
   redis:
     image: redis:7.2
     restart: always
-    command: redis-server --save 60 1 --loglevel warning
+    ports:
+      - "6379:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
-  
+      - ./redis.conf:/usr/local/etc/redis/redis.conf  
+
+
   kafka:
     image: 'bitnami/kafka:latest'
     ports:
@@ -76,14 +79,107 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    volumes:
+      - kafkadata:/hostdata
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8087:8080
+
+  neo4j:
+    image: neo4j:2025.06.2
+    container_name: neo4j-dev
+    hostname: neo4j-server
+    
+    ports:
+      - "7474:7474"  # Neo4j Browser (HTTP)
+      - "7687:7687"  # Bolt protocol (binary)
+      - "7473:7473"  # HTTPS (if needed)
+    
+    volumes:
+      # 核心資料目錄
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - neo4j-plugins:/plugins
+      - neo4j-import:/var/lib/neo4j/import
+      
+      # 將本地的 seed 檔案 mount 到容器內
+      - ./seed-data:/var/lib/neo4j/import/seed
+      - ./scripts:/scripts
+
+    environment:
+      # 基本認證
+      - NEO4J_AUTH=neo4j/password
+      
+      # 記憶體設定
+      - NEO4J_server_memory_heap_initial__size=512M
+      - NEO4J_server_memory_heap_max__size=1G
+      - NEO4J_server_memory_pagecache_size=512M
+      
+      # === 關鍵安全修復 ===
+      # 關閉嚴格配置驗證
+      - NEO4J_server_config_strict__validation_enabled=false
+      
+      # 允許所有程序和函數（開發環境）
+      - NEO4J_dbms_security_procedures_unrestricted=*
+      - NEO4J_dbms_security_procedures_allowlist=*
+      
+      # 允許文件和網路操作
+      - NEO4J_dbms_security_allow__csv__import__from__file__urls=true
+      - NEO4J_dbms_security_allow_outgoing_connections=true
+      
+      # APOC 完整支援
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+      
+      # 基本設定
+      - NEO4J_dbms_read__only=false
+      - NEO4J_dbms_default__database=neo4j
+      
+      # 網路設定
+      - NEO4J_server_bolt_advertised__address=neo4j-server:7687
+      - NEO4J_server_http_advertised__address=neo4j-server:7474
+      
+      # 開發環境寬鬆設定
+      - NEO4J_dbms_security_auth_minimum__password__length=1
+      - NEO4J_dbms_logs_query_enabled=OFF
+    
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7474/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    
+    restart: unless-stopped
+
+  # NeoDash 儀表板服務 (修正 ARM64 兼容性)
+  neodash:
+    image: neo4jlabs/neodash:2.4.10  # 使用具體版本而非 latest
+    platform: linux/amd64         # ARM64 兼容性修正
+    container_name: neodash
+    ports:
+      - "5005:5005"
+    environment:
+      # 預設連線設定
+      - NEO4J_URI=bolt://neo4j-server:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=password
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    restart: unless-stopped
     
 volumes:
   mongodata:
   sqldata:
   postgredata:
+  kafkadata:
+  neo4j-data:    # 資料持久化
+  neo4j-logs:    # 日誌持久化
+  neo4j-plugins: # 插件持久化
+  neo4j-import:  # CSV/JSON 匯入目錄

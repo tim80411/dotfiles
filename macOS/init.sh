@@ -6,5 +6,5 @@ HOSTNAME=$(hostname)
 # 導出環境變數
 export HOSTNAME
 
-# 運行 docker compose
+# 運行 docker-compose
 docker compose up -d

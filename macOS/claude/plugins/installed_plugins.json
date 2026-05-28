@@ -4,40 +4,40 @@
     "context7@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/context7/55b58ec6e564",
-        "version": "55b58ec6e564",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/context7/unknown",
+        "version": "unknown",
         "installedAt": "2026-03-01T04:00:12.446Z",
-        "lastUpdated": "2026-03-01T04:00:12.446Z",
+        "lastUpdated": "2026-04-15T04:14:04.937Z",
         "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
       }
     ],
     "feature-dev@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/feature-dev/55b58ec6e564",
-        "version": "55b58ec6e564",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/feature-dev/unknown",
+        "version": "unknown",
         "installedAt": "2026-03-01T04:01:12.351Z",
-        "lastUpdated": "2026-03-01T04:01:12.351Z",
+        "lastUpdated": "2026-04-15T04:14:04.936Z",
         "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
       }
     ],
     "ralph-loop@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/ralph-loop/55b58ec6e564",
-        "version": "55b58ec6e564",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/ralph-loop/1.0.0",
+        "version": "1.0.0",
         "installedAt": "2026-03-01T04:01:12.362Z",
-        "lastUpdated": "2026-03-01T04:01:12.362Z",
+        "lastUpdated": "2026-03-30T03:03:43.581Z",
         "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
       }
     ],
     "code-review@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/code-review/55b58ec6e564",
-        "version": "55b58ec6e564",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/code-review/unknown",
+        "version": "unknown",
         "installedAt": "2026-03-01T04:02:17.727Z",
-        "lastUpdated": "2026-03-01T04:02:17.727Z",
+        "lastUpdated": "2026-04-15T04:14:04.941Z",
         "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
       }
     ],
@@ -54,30 +54,30 @@
     "commit-commands@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/commit-commands/55b58ec6e564",
-        "version": "55b58ec6e564",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/commit-commands/unknown",
+        "version": "unknown",
         "installedAt": "2026-03-01T04:02:18.120Z",
-        "lastUpdated": "2026-03-01T04:02:18.120Z",
+        "lastUpdated": "2026-04-15T04:14:04.938Z",
         "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
       }
     ],
     "hookify@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/hookify/55b58ec6e564",
-        "version": "55b58ec6e564",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/hookify/unknown",
+        "version": "unknown",
         "installedAt": "2026-03-01T04:02:18.139Z",
-        "lastUpdated": "2026-03-01T04:02:18.139Z",
+        "lastUpdated": "2026-04-15T04:14:04.940Z",
         "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
       }
     ],
     "plugin-dev@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/plugin-dev/55b58ec6e564",
-        "version": "55b58ec6e564",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/plugin-dev/unknown",
+        "version": "unknown",
         "installedAt": "2026-03-01T04:02:18.174Z",
-        "lastUpdated": "2026-03-01T04:02:18.174Z",
+        "lastUpdated": "2026-04-15T04:14:04.939Z",
         "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
       }
     ],
@@ -104,31 +104,238 @@
     "animate-dev@timothy-liao-marketplace": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/animate-dev/1.0.0",
-        "version": "1.0.0",
+        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/animate-dev/1.2.1",
+        "version": "1.2.1",
         "installedAt": "2026-03-01T04:02:19.522Z",
-        "lastUpdated": "2026-03-01T04:02:19.522Z",
+        "lastUpdated": "2026-03-21T08:13:14.078Z",
         "gitCommitSha": "7334c26417d9904e8c61a9012897aa17c7b76251"
       }
     ],
     "spec-writer@timothy-liao-marketplace": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/spec-writer/0.1.0",
-        "version": "0.1.0",
+        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/spec-writer/0.3.0",
+        "version": "0.3.0",
         "installedAt": "2026-03-01T04:02:19.529Z",
-        "lastUpdated": "2026-03-01T04:02:19.529Z",
+        "lastUpdated": "2026-03-21T08:13:14.067Z",
         "gitCommitSha": "7334c26417d9904e8c61a9012897aa17c7b76251"
+      }
+    ],
+    "sentry@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/sentry/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-02T09:43:34.886Z",
+        "lastUpdated": "2026-05-15T10:02:25.823Z",
+        "gitCommitSha": "c716e62ea5a30add9c6807be0d98e5834c387a2d"
+      }
+    ],
+    "code-quality-review@timothy-liao-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/code-quality-review/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-03-03T08:57:43.888Z",
+        "lastUpdated": "2026-03-03T08:57:43.888Z",
+        "gitCommitSha": "76342e1f3dd6156c32805d41e8825b7018371e78"
       }
     ],
     "superpowers@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/superpowers/4.3.1",
-        "version": "4.3.1",
-        "installedAt": "2026-03-01T04:02:19.490Z",
-        "lastUpdated": "2026-03-01T04:02:19.490Z",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0",
+        "version": "5.1.0",
+        "installedAt": "2026-03-09T06:42:08.323Z",
+        "lastUpdated": "2026-05-20T03:50:54.268Z",
         "gitCommitSha": "e4a2375cb705ca5800f0833528ce36a3faf9017a"
+      }
+    ],
+    "document-skills@anthropic-agent-skills": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/anthropic-agent-skills/document-skills/690f15cac7f7",
+        "version": "690f15cac7f7",
+        "installedAt": "2026-03-11T08:47:59.042Z",
+        "lastUpdated": "2026-05-20T03:14:17.367Z",
+        "gitCommitSha": "690f15cac7f7b4c055c5ab109c79ed9259934081"
+      }
+    ],
+    "deploy-gdrive@timothy-liao-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/deploy-gdrive/0.3.1",
+        "version": "0.3.1",
+        "installedAt": "2026-03-11T08:52:00.943Z",
+        "lastUpdated": "2026-03-21T08:13:14.064Z",
+        "gitCommitSha": "c29acb8c08432390a264a7943109622c8c781ebc"
+      }
+    ],
+    "team-context@nani-skill": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/nani-skill/team-context/2.5.4",
+        "version": "2.5.4",
+        "installedAt": "2026-03-12T01:59:25.235Z",
+        "lastUpdated": "2026-04-09T12:42:47.537Z",
+        "gitCommitSha": "b98317a334c850d73faff086752be47bc8d3ed79"
+      }
+    ],
+    "bkt-cli@nani-skill": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/nani-skill/bkt-cli/1.0.20",
+        "version": "1.0.20",
+        "installedAt": "2026-03-12T02:13:43.153Z",
+        "lastUpdated": "2026-03-25T10:23:18.706Z",
+        "gitCommitSha": "433bd2fa68ee83f9bdf49989f7ccf452a304ad64"
+      }
+    ],
+    "jira-cli@nani-skill": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/nani-skill/jira-cli/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-12T09:04:06.323Z",
+        "lastUpdated": "2026-03-12T09:04:06.323Z",
+        "gitCommitSha": "775b91701e9e2e9eeec5eae1149c50e2ec2412bd"
+      }
+    ],
+    "agent-browser@agent-browser": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/agent-browser/agent-browser/99c732c18810",
+        "version": "99c732c18810",
+        "installedAt": "2026-03-14T04:37:50.916Z",
+        "lastUpdated": "2026-03-14T04:37:50.916Z",
+        "gitCommitSha": "99c732c18810494593ead9dd96ab6f5f0c78b729"
+      }
+    ],
+    "linear@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/linear/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-21T06:58:26.391Z",
+        "lastUpdated": "2026-04-15T04:14:04.936Z",
+        "gitCommitSha": "61c0597779bd2d670dcd4fbbf37c66aa19eb2ce6"
+      }
+    ],
+    "nani-hr@nani-skill": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/nani-skill/nani-hr/1.10.0",
+        "version": "1.10.0",
+        "installedAt": "2026-03-25T10:21:49.411Z",
+        "lastUpdated": "2026-05-26T09:46:21.892Z",
+        "gitCommitSha": "b1feeaa132ce24b416cd92d92c202a2b041064d7"
+      }
+    ],
+    "gopls-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/gopls-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-30T07:42:35.024Z",
+        "lastUpdated": "2026-03-30T07:42:35.024Z"
+      }
+    ],
+    "interview-prep@tim-private-skills": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/tim-private-skills/interview-prep/1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-04-08T04:26:38.522Z",
+        "lastUpdated": "2026-05-11T08:59:17.997Z",
+        "gitCommitSha": "07f419deff65d586d376e9c4fd2742b88a331757"
+      }
+    ],
+    "nani-office@nani-skill": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/nani-skill/nani-office/1.8.0",
+        "version": "1.8.0",
+        "installedAt": "2026-04-16T10:07:35.581Z",
+        "lastUpdated": "2026-05-20T04:24:54.768Z",
+        "gitCommitSha": "cd0bb683ec9ca7721511aef563a7019025f172bd"
+      }
+    ],
+    "interview-tools@nani-skill": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/nani-skill/interview-tools/1.3.0",
+        "version": "1.3.0",
+        "installedAt": "2026-04-17T06:34:22.738Z",
+        "lastUpdated": "2026-05-12T10:28:53.970Z",
+        "gitCommitSha": "4f29afdc01dc74cf7cbd5949c633538431017822"
+      }
+    ],
+    "data-converter@timothy-liao-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/data-converter/1.5.1",
+        "version": "1.5.1",
+        "installedAt": "2026-04-17T07:06:39.882Z",
+        "lastUpdated": "2026-04-17T07:06:39.882Z",
+        "gitCommitSha": "89622a763d6a9b45eefce16d6429532532999f61"
+      }
+    ],
+    "outsourcing@tim-private-skills": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/tim-private-skills/outsourcing/1.0.1",
+        "version": "1.0.1",
+        "installedAt": "2026-04-21T04:41:34.595Z",
+        "lastUpdated": "2026-05-11T08:59:17.995Z",
+        "gitCommitSha": "5a55efa0a3129c97e9a68bd6d5f5253f35cde625"
+      }
+    ],
+    "skill-creator@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-29T08:41:51.464Z",
+        "lastUpdated": "2026-04-29T08:41:51.464Z"
+      }
+    ],
+    "k8s-troubleshooter@timothy-liao-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/timothy-liao-marketplace/k8s-troubleshooter/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-05-15T02:39:52.624Z",
+        "lastUpdated": "2026-05-15T02:39:52.624Z",
+        "gitCommitSha": "33ea983053211908a685978e275bfde441d09a50"
+      }
+    ],
+    "nani-daily-standup@nani-skill": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/nani-skill/nani-daily-standup/0.6.0",
+        "version": "0.6.0",
+        "installedAt": "2026-05-19T08:35:39.928Z",
+        "lastUpdated": "2026-05-26T03:09:59.291Z",
+        "gitCommitSha": "45be2823929bed3d7f4390fd66973fc5676d7b67"
+      }
+    ],
+    "project-management@nani-skill": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/nani-skill/project-management/1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-05-19T08:57:41.320Z",
+        "lastUpdated": "2026-05-19T08:57:41.320Z",
+        "gitCommitSha": "be10b99e8ce6c7c3b41fec58493054d7eb2afd22"
+      }
+    ],
+    "clangd-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "__HOME__/.claude/plugins/cache/claude-plugins-official/clangd-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-22T06:25:09.210Z",
+        "lastUpdated": "2026-05-22T06:25:09.210Z"
       }
     ]
   }

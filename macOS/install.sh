@@ -61,6 +61,8 @@ function configure_zsh {
     title="configure zsh"
     print_step "$1" "$title"
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zshrc > ~/.zshrc
+    mkdir -p ~/.zsh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/wifi-helpers.zsh > ~/.zsh/wifi-helpers.zsh
     success "$title"
 }
 
@@ -141,7 +143,8 @@ function configure_claude_scripts {
     print_step "$1" "$title"
     mkdir -p ~/.claude/scripts
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/scripts/rate-limit.sh > ~/.claude/scripts/rate-limit.sh
-    chmod +x ~/.claude/scripts/rate-limit.sh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/scripts/auto-rename.sh > ~/.claude/scripts/auto-rename.sh
+    chmod +x ~/.claude/scripts/rate-limit.sh ~/.claude/scripts/auto-rename.sh
 
     success "$title"
 }
@@ -198,6 +201,16 @@ function configure_claude_notify {
     success "$title"
 }
 
+# configure claude hooks (verify-before-done Stop hook)
+function configure_claude_hooks {
+    title="configure claude hooks"
+    print_step "$1" "$title"
+    mkdir -p ~/.claude/hooks
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/hooks/verify.sh > ~/.claude/hooks/verify.sh
+    chmod +x ~/.claude/hooks/verify.sh
+    success "$title"
+}
+
 # configure TCIM auto-restart (fix input method freeze)
 function configure_tcim_restart {
     title="configure tcim auto-restart"
@@ -220,7 +233,7 @@ function init_service {
     success "$title"
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_ghostty" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 

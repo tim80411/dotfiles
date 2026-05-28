@@ -8,6 +8,11 @@
         "rawValue": true
       },
       {
+        "id": "0b32ea8e-9580-44f0-919b-64e62583f2ca",
+        "type": "thinking-effort",
+        "rawValue": true
+      },
+      {
         "id": "c00332ec-f416-4fd1-bf73-9b2c907f5c72",
         "type": "separator"
       },
@@ -42,12 +47,42 @@
     ],
     [
       {
-        "id": "f29157be-e0d3-4405-8e26-1ee65b843899",
-        "type": "custom-command",
+        "id": "78b95d82-feef-4203-b315-4e8eabe46432",
+        "type": "session-usage",
+        "rawValue": false,
+        "metadata": {
+          "display": "slider"
+        }
+      },
+      {
+        "id": "67ae783a-211c-4e01-9006-13f3de130f2f",
+        "type": "reset-timer",
         "rawValue": true,
-        "preserveColors": true,
-        "commandPath": "bash ~/.claude/scripts/rate-limit.sh",
-        "timeout": 3000
+        "merge": "no-padding",
+        "metadata": {
+          "display": "time",
+          "compact": "true"
+        }
+      },
+      {
+        "id": "634f5209-8e7d-467d-8b9a-33380d09a6c2",
+        "type": "separator"
+      },
+      {
+        "id": "45f931dd-3eb2-49b4-832e-37b47fb1cf15",
+        "type": "weekly-usage",
+        "rawValue": false
+      },
+      {
+        "id": "773e4615-7a1c-45e9-9f09-be1bffb14add",
+        "type": "weekly-reset-timer",
+        "rawValue": true,
+        "metadata": {
+          "display": "time",
+          "absolute": "false",
+          "compact": "true",
+          "hours": "false"
+        }
       }
     ],
     [
@@ -76,6 +111,7 @@
   "defaultPadding": " ",
   "inheritSeparatorColors": false,
   "globalBold": true,
+  "minimalistMode": false,
   "powerline": {
     "enabled": false,
     "separators": [
@@ -86,6 +122,7 @@
     ],
     "startCaps": [],
     "endCaps": [],
-    "autoAlign": false
+    "autoAlign": false,
+    "continueThemeAcrossLines": false
   }
 }

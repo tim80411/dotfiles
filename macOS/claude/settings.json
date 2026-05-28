@@ -1,6 +1,18 @@
 {
+  "skillListingBudgetFraction": 0.03,
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_TEAMMATE_MODE": "in-process",
+    "CLAUDE_CODE_NO_FLICKER": "1",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/json",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "https://otel.nani.com.tw:4318",
+    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer placeholder",
+    "OTEL_RESOURCE_ATTRIBUTES": "service.namespace=nani",
+    "NODE_EXTRA_CA_CERTS": "/Users/tim80411/Library/Application Support/mkcert/rootCA.pem",
+    "GRPC_DEFAULT_SSL_ROOTS_FILE_PATH": "/Users/tim80411/Library/Application Support/mkcert/rootCA.pem"
   },
   "permissions": {
     "allow": [
@@ -12,9 +24,9 @@
       "WebSearch",
       "WebFetch",
       "mcp__pencil"
-    ]
+    ],
+    "defaultMode": "auto"
   },
-  "model": "opus",
   "hooks": {
     "Notification": [
       {
@@ -34,6 +46,29 @@
             "command": "bash ~/.claude/notify_mobile.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/verify.sh",
+            "timeout": 120,
+            "statusMessage": "完成前驗證變更中…"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/auto-rename.sh",
+            "timeout": 30,
+            "statusMessage": "Haiku 分析問題中...",
+            "once": true
+          }
+        ]
       }
     ]
   },
@@ -46,19 +81,75 @@
     "code-review@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
+    "context7@claude-plugins-official": false,
     "hookify@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "figma-reader@timothy-liao-marketplace": true,
+    "figma-reader@timothy-liao-marketplace": false,
     "animate-dev@timothy-liao-marketplace": true,
     "spec-writer@timothy-liao-marketplace": true,
     "feature-dev@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true,
-    "sentry@claude-plugins-official": true,
+    "sentry@claude-plugins-official": false,
     "code-quality-review@timothy-liao-marketplace": true,
-    "figma@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true
+    "superpowers@claude-plugins-official": true,
+    "document-skills@anthropic-agent-skills": true,
+    "deploy-gdrive@timothy-liao-marketplace": true,
+    "bkt-cli@nani-skill": true,
+    "team-context@nani-skill": true,
+    "jira-cli@nani-skill": false,
+    "agent-browser@agent-browser": true,
+    "linear@claude-plugins-official": true,
+    "nani-hr@nani-skill": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "interview-prep@tim-private-skills": true,
+    "nani-office@nani-skill": true,
+    "interview-tools@nani-skill": true,
+    "data-converter@timothy-liao-marketplace": true,
+    "outsourcing@tim-private-skills": true,
+    "skill-creator@claude-plugins-official": true,
+    "k8s-troubleshooter@timothy-liao-marketplace": true,
+    "nani-daily-standup@nani-skill": true,
+    "project-management@nani-skill": true,
+    "clangd-lsp@claude-plugins-official": true
   },
-  "fastMode": true
+  "extraKnownMarketplaces": {
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    },
+    "nani-skill": {
+      "source": {
+        "source": "git",
+        "url": "git@bitbucket.org:rd-oneclass/nani_skill.git"
+      },
+      "autoUpdate": true
+    },
+    "agent-browser": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/vercel-labs/agent-browser.git"
+      }
+    },
+    "tim-private-skills": {
+      "source": {
+        "source": "github",
+        "repo": "tim80411/tim-private-skills"
+      }
+    }
+  },
+  "effortLevel": "xhigh",
+  "showClearContextOnPlanAccept": true,
+  "autoMemoryEnabled": true,
+  "autoDreamEnabled": true,
+  "editorMode": "vim",
+  "preferredNotifChannel": "ghostty",
+  "teammateMode": "in-process",
+  "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "outputStyle": "Learning"
 }

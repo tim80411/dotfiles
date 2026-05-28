@@ -5,7 +5,7 @@
       "repo": "anthropics/claude-plugins-official"
     },
     "installLocation": "__HOME__/.claude/plugins/marketplaces/claude-plugins-official",
-    "lastUpdated": "2026-03-01T08:10:37.782Z"
+    "lastUpdated": "2026-05-28T07:55:51.625Z"
   },
   "timothy-liao-marketplace": {
     "source": {
@@ -13,6 +13,40 @@
       "repo": "tim80411/ai-agent-extension"
     },
     "installLocation": "__HOME__/.claude/plugins/marketplaces/timothy-liao-marketplace",
-    "lastUpdated": "2026-03-01T04:37:40.030Z"
+    "lastUpdated": "2026-05-28T07:21:22.627Z",
+    "autoUpdate": true
+  },
+  "anthropic-agent-skills": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/skills"
+    },
+    "installLocation": "__HOME__/.claude/plugins/marketplaces/anthropic-agent-skills",
+    "lastUpdated": "2026-05-28T07:57:06.100Z"
+  },
+  "nani-skill": {
+    "source": {
+      "source": "git",
+      "url": "git@bitbucket.org:rd-oneclass/nani_skill.git"
+    },
+    "installLocation": "__HOME__/.claude/plugins/marketplaces/nani-skill",
+    "lastUpdated": "2026-05-28T07:57:04.014Z",
+    "autoUpdate": true
+  },
+  "agent-browser": {
+    "source": {
+      "source": "git",
+      "url": "https://github.com/vercel-labs/agent-browser.git"
+    },
+    "installLocation": "__HOME__/.claude/plugins/marketplaces/agent-browser",
+    "lastUpdated": "2026-03-14T04:37:45.033Z"
+  },
+  "tim-private-skills": {
+    "source": {
+      "source": "github",
+      "repo": "tim80411/tim-private-skills"
+    },
+    "installLocation": "__HOME__/.claude/plugins/marketplaces/tim-private-skills",
+    "lastUpdated": "2026-05-11T08:59:17.980Z"
   }
 }

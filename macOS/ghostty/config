@@ -5,8 +5,9 @@
 # --- Font ---
 # Ghostty 內建 JetBrains Mono + Nerd Font 符號，可不設
 # 如果偏好 Hack，取消下面的註解：
-# font-family = Hack Nerd Font Mono
-font-size = 13
+font-family = Sarasa Mono TC
+font-family = Hack Nerd Font Mono
+font-size = 15
 
 # --- Theme ---
 # 用內建主題取代手動色盤（ghostty +list-themes 查看所有可用主題）
@@ -26,13 +27,18 @@ window-padding-y = 8
 window-inherit-working-directory = true
 
 # 啟動時自動執行 tmux-new.sh（等同 iTerm2 的 profile command）
-command = /Users/tim80411/bin/tmux-new.sh
+# 已停用：cmux 自己就是多工器，不需要再起 tmux
+# command = /Users/tim80411/bin/tmux-new.sh
 
 # 左 Option 鍵送 Meta/Esc+（從 iTerm2 保留的習慣）
 macos-option-as-alt = left
 
 # 桌面通知（Claude Code 任務完成提醒）
 desktop-notifications = true
+
+# 選取即複製到系統剪貼簿（Cmd+V 可貼）
+# 注意：macOS 預設值 true 走 selection clipboard 在 macOS 無效，要用 clipboard
+copy-on-select = clipboard
 
 # --- Link ---
 # 讓連結點擊在程式捕獲滑鼠時仍可用（Cmd+Click 失效時改用 Cmd+Shift+Click）

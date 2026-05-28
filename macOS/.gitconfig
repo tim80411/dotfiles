@@ -1,6 +1,7 @@
 [user]
 	name = Timothy Liao
 	email = tim80411@oneclass.tw
+	signingkey = 75E79E5459419DE869714E4AC32E61094BD1D833
 [core]
 	excludesfile = /Users/liaoyiting/.gitignore_global
 [commit]
@@ -31,7 +32,7 @@
   co = commit
   com = "!git add . && git co -m"
   comm="!sh -c 'branch=$(git branch --show-current); version=$(echo $branch | grep -oE \"[A-Z0-9]+-[0-9]+\" | head -1); git add . && git commit -m \"$1 (#$version)\"' -"
-  contain = "!f() { git branch --contains $1; }; f"
+  contain = "!f() { git branch --contains $1; }; f" 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f

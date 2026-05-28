@@ -1,3 +1,40 @@
+# 注意：本檔會被 install.sh 部署到 ~/.ssh/config（public repo）。
+# 真實伺服器 IP 以 <PLACEHOLDER> 表示，安裝後請在本機自行填入實際位址。
+
+Include ~/.orbstack/ssh/config
+
+Host localhost
+  User tim80411
+  IdentityFile ~/.ssh/id_ed25519_local
+
 Host bitbucket.org
   AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_e25519
+  IdentityFile ~/.ssh/id_ed25519_nani
+
+Host cws
+  AddKeysToAgent yes
+  HostName <CWS_IP>
+  User root
+  IdentityFile ~/.ssh/id_ed25519_cws
+
+Host cws-other
+  AddKeysToAgent yes
+  HostName <CWS_OTHER_IP>
+  User root
+  IdentityFile ~/.ssh/id_ed25519_cws
+
+# Oracle Cloud K8s Cluster
+Host oci-cp
+  HostName <OCI_CP_IP>
+  User ubuntu
+  IdentityFile ~/.ssh/id_rsa_oracle_cloud
+
+Host oci-worker-1
+  HostName <OCI_WORKER1_IP>
+  User ubuntu
+  IdentityFile ~/.ssh/id_rsa_oracle_cloud
+
+Host oci-worker-2
+  HostName <OCI_WORKER2_IP>
+  User ubuntu
+  IdentityFile ~/.ssh/id_rsa_oracle_cloud
