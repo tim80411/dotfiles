@@ -42,7 +42,9 @@ find_up() {
 
 fail=0
 ran=0
+skipped=0
 report=""
+skip_report=""
 root=""
 
 run() { # run "<label>" <cmd...>
@@ -66,7 +68,13 @@ if r="$(find_up package.json)" && [ "$r" != "$HOME" ]; then
   [ -f yarn.lock ] && pm=yarn
   [ -f pnpm-lock.yaml ] && pm=pnpm
   [ -f bun.lockb ] && pm=bun
-  if command -v "$pm" >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+  if [ ! -d node_modules ]; then
+    skipped=1
+    skip_report="${skip_report}
+— node 相依檢查 skipped（${root}）—
+node_modules 缺失，請先 pnpm install（或對應套件管理器安裝）後再驗證。
+"
+  elif command -v "$pm" >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
     for s in typecheck type-check tsc; do
       if has_script "$s"; then ran=1; run "$pm run $s" "$pm" run "$s"; break; fi
     done
@@ -89,12 +97,23 @@ elif r="$(find_up Cargo.toml)" && [ "$r" != "$HOME" ]; then
   if command -v cargo >/dev/null 2>&1; then ran=1; run "cargo check" cargo check -q; fi
 fi
 
-# nothing detected / nothing runnable -> silent pass
-[ "$ran" = "1" ] || exit 0
-[ "$fail" = "0" ] && exit 0
+# nothing detected / nothing runnable, and nothing skipped -> silent pass
+{ [ "$ran" = "1" ] || [ "$skipped" = "1" ]; } || exit 0
+if [ "$fail" = "0" ]; then
+  # skip-only path: advisory notice, never blocks (not a failure)
+  if [ "$skipped" = "1" ]; then
+    skip_msg="ℹ️ 驗證已 skip：${skip_report}"
+    if command -v jq >/dev/null 2>&1; then
+      jq -cn --arg m "$skip_msg" '{systemMessage:$m, suppressOutput:true}'
+    else
+      printf '%s\n' "$skip_msg" 1>&2
+    fi
+  fi
+  exit 0
+fi
 
 # --- failure path ----------------------------------------------------------
-msg="⚠️ 完成前驗證發現問題（${root}）：${report}"
+msg="⚠️ 完成前驗證發現問題（${root}）：${report}${skip_report}"
 if [ "$BLOCK_ON_FAIL" = "1" ]; then
   printf '%s' "$msg" 1>&2   # exit 2 => block stop, feed reason back to Claude
   exit 2

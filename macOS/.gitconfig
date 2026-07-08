@@ -1,6 +1,6 @@
 [user]
 	name = Timothy Liao
-	email = tim80411@oneclass.tw
+	email = tim80411@gmail.com
 	signingkey = 75E79E5459419DE869714E4AC32E61094BD1D833
 [core]
 	excludesfile = /Users/liaoyiting/.gitignore_global
@@ -40,3 +40,9 @@
 	required = true
 [credential]
 	helper = cache
+[includeIf "hasconfig:remote.*.url:git@bitbucket.org:*/**"]
+	path = ~/.gitconfig-bitbucket
+[includeIf "hasconfig:remote.*.url:https://bitbucket.org/**"]
+	path = ~/.gitconfig-bitbucket
+[includeIf "hasconfig:remote.*.url:ssh://git@bitbucket.org/**"]
+	path = ~/.gitconfig-bitbucket
