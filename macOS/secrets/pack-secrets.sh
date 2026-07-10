@@ -24,6 +24,14 @@ done
 # --- 1) 打包「存在的」機密路徑 ---
 present=()
 for p in "${SECRET_PATHS[@]}"; do [ -e "$HOME/$p" ] && present+=("$p"); done
+# glob 展開(如各專案的 Claude memory 目錄);nullglob 讓無匹配時不留下字面 pattern
+if [ "${#SECRET_GLOBS[@]}" -gt 0 ]; then
+  shopt -s nullglob
+  for g in "${SECRET_GLOBS[@]}"; do
+    for m in "$HOME"/$g; do present+=("${m#$HOME/}"); done
+  done
+  shopt -u nullglob
+fi
 [ "${#present[@]}" -gt 0 ] || die "沒有找到任何機密路徑可打包"
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
 archive="$tmp/$DOTFILES_SECRETS_ARCHIVE"

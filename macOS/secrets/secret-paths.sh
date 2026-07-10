@@ -43,6 +43,9 @@ SECRET_PATHS=(
   .cache/huggingface/stored_tokens
   .claude.json
   .claude/CLAUDE.md
+  # 累積的指令歷史(不可重建;高頻變動,包只更新到上次 pack 為止)
+  .zsh_history
+  .bash_history
   Library/LaunchAgents/com.career.session-map.plist
   Library/LaunchAgents/com.career.weekly-review.plist
   Library/LaunchAgents/com.local.shioaji-ticker.plist
@@ -60,4 +63,10 @@ SECRET_TAR_EXCLUDES=(
   --exclude='.gnupg/S.*'
   --exclude='.gnupg/*.sock'
   --exclude='.ssh/agent'
+)
+
+# 需要 glob 展開的路徑(pack 會逐一展開;適合「多個同名子目錄」如各專案的 Claude 累積 memory)。
+# 這些 memory 是不可重建的累積知識,且半機密(可能含端點/決策),放進加密 bundle 剛好。
+SECRET_GLOBS=(
+  ".claude/projects/*/memory"
 )

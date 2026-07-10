@@ -138,17 +138,8 @@ function configure_docker_compose {
     success "$title"
 }
 
-# setting ssh config
-function configure_ssh_config {
-    title="configure ssh config"
-    print_step "$1" "$title"
-    # 修正:寫檔前先建立 ~/.ssh(否則新機器上 curl 會因目錄不存在而失敗);ssh 要求該目錄權限 700
-    mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    # 既有 config 先備份,避免無備份覆蓋個人設定
-    [ -f ~/.ssh/config ] && cp ~/.ssh/config ~/.ssh/config.bak
-    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/sshConfig > ~/.ssh/config
-    success "$title"
-}
+# 註:~/.ssh(含 config)由 secrets bundle(bootstrap-secrets.sh)獨佔還原,
+# install.sh 不再部署遮罩版 config,避免蓋掉 bundle 的真實版。見 secrets/SECRETS-STRATEGY.md。
 
 # setting vim config
 function configure_vim_config {
@@ -309,7 +300,7 @@ function init_service {
     success "$title"
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
