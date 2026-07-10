@@ -271,6 +271,19 @@ function configure_tcim_restart {
     success "$title"
 }
 
+# configure secrets scripts (pack / bootstrap via Bitwarden)
+function configure_secrets_scripts {
+    title="configure secrets scripts"
+    print_step "$1" "$title"
+    mkdir -p ~/bin
+    # 只佈署工具腳本;不自動跑 bootstrap(bw unlock 是刻意保留的互動步驟,見 secrets/SECRETS-STRATEGY.md)
+    for f in secret-paths.sh pack-secrets.sh bootstrap-secrets.sh; do
+        curl -fsSL "https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/secrets/$f" > ~/bin/"$f"
+    done
+    chmod +x ~/bin/pack-secrets.sh ~/bin/bootstrap-secrets.sh
+    success "$title"
+}
+
 function init_service {
     title="init service"
     print_step "$1" "$title"
@@ -296,7 +309,7 @@ function init_service {
     success "$title"
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_ssh_config" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
@@ -315,6 +328,8 @@ for step in "${!install_step[@]}"; do
 done
 
 trap - ERR
+
+printf "\n${COLOR_GRAY}機密還原(選用):裝好並 'bw login' 後,執行 ~/bin/bootstrap-secrets.sh 從 Bitwarden 拉回機密(詳見 macOS/secrets/SECRETS-STRATEGY.md)。${COLOR_NONE}\n"
 
 if [ "${#failed_steps[@]}" -gt 0 ]; then
     printf "\n${COLOR_RED}==== 完成,但有 %s 個階段發生問題 ====${COLOR_NONE}\n" "${#failed_steps[@]}"
