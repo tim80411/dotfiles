@@ -56,9 +56,15 @@ trap print_out SIGTERM SIGINT SIGHUP
 function install_homebrew {
     title="Install Homebrew"
     print_step "$1" "$title"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    export PATH=$PATH:/opt/homebrew/bin
-
+    # 已安裝就不必重跑官方安裝器(否則每次都會空轉:重新 fetch brew repo、重設權限,又慢又吵)
+    if command -v brew >/dev/null 2>&1; then
+        warn "$title: Homebrew 已安裝,略過安裝"
+    else
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    # 非互動 shell 不讀 .zshrc,手動載入 brew 環境讓後續 brew bundle 找得到;
+    # shellenv 會正確 prepend(勝過原本 append 的 export,避免系統同名工具蓋過 brew 版)
+    eval "$(/opt/homebrew/bin/brew shellenv)"
     success "$title"
 }
 
