@@ -16,8 +16,25 @@ function print_out {
     exit
 }
 
+# step_rc:目前階段是否發生錯誤(0=無,1=有)。由主迴圈的 ERR trap 與 fail_here 設定。
+# 這是「讓失敗看得見」的核心:success 會依它決定印綠色 success 還是紅色 FAILED。
+step_rc=0
+
 function success {
-    printf "\n ${COLOR_GREEN}success ${COLOR_NONE}$1\n"
+    if [ "${step_rc:-0}" -ne 0 ]; then
+        printf "\n ${COLOR_RED}FAILED ${COLOR_NONE}$1${COLOR_GRAY} (見上方錯誤)${COLOR_NONE}\n"
+    else
+        printf "\n ${COLOR_GREEN}success ${COLOR_NONE}$1\n"
+    fi
+}
+
+function warn {
+    printf "\n ${COLOR_YELLOW}warn ${COLOR_NONE}$1\n"
+}
+
+# 標記目前階段為失敗(結尾總結會列出),但不中斷後續階段
+function fail_here {
+    step_rc=1
 }
 
 function error {
@@ -49,8 +66,19 @@ function install_homebrew {
 function install_homebrew_dependencies {
     title="Install Homebrew dependencies"
     print_step "$1" "$title"
-    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/Brewfile > /tmp/Brewfile  
-    brew bundle --file /tmp/Brewfile  
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/Brewfile > /tmp/Brewfile
+    # brew 6.x 預設並行下載,~100 個套件裡偶發 1-2 個暫時性 CDN 失敗很常見。
+    # brew bundle 具冪等性(已裝的會略過),因此重試最多 3 次讓暫時性失敗自我修復。
+    local ok=0 attempt
+    for attempt in 1 2 3; do
+        if brew bundle --file /tmp/Brewfile; then
+            ok=1
+            break
+        fi
+        warn "brew bundle 第 ${attempt} 次未全數成功,3 秒後重試…"
+        sleep 3
+    done
+    [ "$ok" -eq 1 ] || { warn "brew bundle 重試 3 次後仍有套件未安裝,請查看上方輸出"; fail_here; }
     rm /tmp/Brewfile
 
     success "$title"
@@ -79,7 +107,8 @@ function configure_powerlevel10k {
 function setup_default_use_zsh {
     title="setup default use zsh"
     print_step "$1" "$title"
-    chsh -s /bin/zsh
+    # chsh 在「已是 zsh」時會回傳非零並印 no changes made,屬正常情況,不算失敗
+    chsh -s /bin/zsh || warn "$title: 預設 shell 未變更(可能已是 zsh)"
 
     success "$title"
 }
@@ -106,6 +135,10 @@ function configure_docker_compose {
 function configure_ssh_config {
     title="configure ssh config"
     print_step "$1" "$title"
+    # 修正:寫檔前先建立 ~/.ssh(否則新機器上 curl 會因目錄不存在而失敗);ssh 要求該目錄權限 700
+    mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    # 既有 config 先備份,避免無備份覆蓋個人設定
+    [ -f ~/.ssh/config ] && cp ~/.ssh/config ~/.ssh/config.bak
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/sshConfig > ~/.ssh/config
     success "$title"
 }
@@ -118,19 +151,24 @@ function configure_vim_config {
     success "$title"
 }
 
-# setting redis config
-function configure_redis_config {
-    title="configure redis config"
-    print_step "$1" "$title"
-    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/redis.conf > ~/redis.conf
-    success "$title"
-}
-
 # install and configure ccstatusline
 function configure_ccstatusline {
     title="configure ccstatusline"
     print_step "$1" "$title"
-    npm install -g ccstatusline
+    # 修正:npm 由 nvm 管理,非互動 shell 不會自動載入 nvm,需手動 source 才找得到 npm。
+    # source nvm.sh 時暫時卸下 ERR trap,避免 nvm 內部的非零指令誤觸發本階段失敗。
+    export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+    if [ -s "$NVM_DIR/nvm.sh" ]; then
+        trap - ERR
+        . "$NVM_DIR/nvm.sh"
+        trap 'step_rc=1' ERR
+    fi
+    if command -v npm >/dev/null 2>&1; then
+        npm install -g ccstatusline
+    else
+        warn "$title: 找不到 npm(需先用 nvm 安裝 node),略過 ccstatusline 本體安裝"
+        fail_here
+    fi
     mkdir -p ~/.config/ccstatusline
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/ccstatusline/settings.json > ~/.config/ccstatusline/settings.json
 
@@ -219,7 +257,8 @@ function configure_tcim_restart {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/tcim/restart-tcim.sh > ~/bin/restart-tcim.sh
     chmod +x ~/bin/restart-tcim.sh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/tcim/com.local.restart-tcim.plist | sed "s|__HOME__|$HOME|g" > ~/Library/LaunchAgents/com.local.restart-tcim.plist
-    launchctl unload ~/Library/LaunchAgents/com.local.restart-tcim.plist 2>/dev/null
+    # unload 在「尚未載入」時會回傳非零,屬正常情況,以 || true 吸收避免誤判失敗
+    launchctl unload ~/Library/LaunchAgents/com.local.restart-tcim.plist 2>/dev/null || true
     launchctl load ~/Library/LaunchAgents/com.local.restart-tcim.plist
 
     success "$title"
@@ -228,8 +267,25 @@ function configure_tcim_restart {
 function init_service {
     title="init service"
     print_step "$1" "$title"
-    chmod +x ~/init.sh
-    ~/init.sh
+    # 修正:docker 由 OrbStack 提供,非互動 shell 的 PATH 不含其 CLI 路徑,先補上
+    export PATH="$PATH:/usr/local/bin:$HOME/.orbstack/bin"
+    if command -v docker >/dev/null 2>&1; then
+        # OrbStack「已安裝」不代表「已啟動」;daemon 沒起來 docker compose 也起不來,先確保它就緒
+        if ! docker info >/dev/null 2>&1; then
+            open -a OrbStack 2>/dev/null || true
+            for i in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 1; done
+        fi
+        if docker info >/dev/null 2>&1; then
+            chmod +x ~/init.sh
+            ~/init.sh
+        else
+            warn "$title: docker daemon 未就緒,略過 docker compose up"
+            fail_here
+        fi
+    else
+        warn "$title: 找不到 docker(OrbStack 未安裝或未啟動),略過服務初始化"
+        fail_here
+    fi
     success "$title"
 }
 
@@ -239,8 +295,27 @@ len=${#install_step[*]}
 
 
 # ================= main function ========================
+# set -E 讓 ERR trap 被 function 繼承;ERR trap 只「記錄」不 exit,所以單一階段失敗
+# 不會中斷整個安裝,而是在結尾統一列出。這解決了「每個階段都必定回報 success」的問題。
+set -E
+trap 'step_rc=1' ERR
+
+failed_steps=()
 for step in "${!install_step[@]}"; do
-    ${install_step[$step]} $(( step + 1 )) || {
-        error "Failed at step $(( step + 1 )): ${install_step[$step]}"
-    }
+    step_rc=0
+    "${install_step[$step]}" "$(( step + 1 ))"
+    [ "$step_rc" -eq 0 ] || failed_steps+=("${install_step[$step]}")
 done
+
+trap - ERR
+
+if [ "${#failed_steps[@]}" -gt 0 ]; then
+    printf "\n${COLOR_RED}==== 完成,但有 %s 個階段發生問題 ====${COLOR_NONE}\n" "${#failed_steps[@]}"
+    for s in "${failed_steps[@]}"; do
+        printf "  ${COLOR_RED}✘${COLOR_NONE} %s\n" "$s"
+    done
+    printf "${COLOR_GRAY}(其餘階段成功。請往上捲動查看各失敗階段的細節)${COLOR_NONE}\n"
+    exit 1
+fi
+
+printf "\n${COLOR_GREEN}==== 全部 %s 個階段完成 ====${COLOR_NONE}\n" "$len"
