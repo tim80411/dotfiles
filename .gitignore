@@ -1,1 +1,4 @@
 .DS_Store
+
+# live Claude settings — deploy from settings.example.json; keep the real file out of git
+macOS/claude/settings.json

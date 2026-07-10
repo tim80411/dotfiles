@@ -220,7 +220,7 @@ function configure_claude_settings {
     title="configure claude settings"
     print_step "$1" "$title"
     mkdir -p ~/.claude
-    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/settings.json > ~/.claude/settings.json
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/settings.example.json > ~/.claude/settings.json
 
     success "$title"
 }
