@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
+  "schemaVersion": 1,
+
+  // file-managed：只設 socketControlMode，其餘設定回退到 cmux GUI/預設。
+  // automation＝允許「同一 macOS 使用者」的外部本機自動化 client（如 launchd）呼叫 cmux notify，
+  // 免密碼、不檢查行程血緣（拆掉 cmux issue #3089 的血緣牆）。
+  // ⚠️ 改此設定後必須「重啟 cmux」才生效——socket 授權在 app 啟動時綁定，`cmux reload-config` 不會重綁。
+  "automation": {
+    "socketControlMode": "automation"
+  }
+}

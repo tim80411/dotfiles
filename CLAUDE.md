@@ -18,7 +18,8 @@ macOS/          # macOS-specific configs
   .vimrc        # Vim settings
   .p10k.zsh     # Powerlevel10k theme config
   ghostty/      # Ghostty terminal emulator config
-  claude/       # Claude Code settings, plugins, hooks, scripts
+  cmux/         # cmux automation socket-mode config (讓 launchd 能呼叫 cmux notify)
+  claude/       # Claude Code settings, plugins, hooks, scripts, ntfy-desktop 訂閱器(launchd)
   ccstatusline/ # ccstatusline settings
   tcim/         # TCIM input method auto-restart (launchd)
   tmux/         # tmux helper scripts (tmux-new.sh, tmux-pick.sh)

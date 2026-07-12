@@ -262,6 +262,43 @@ function configure_tcim_restart {
     success "$title"
 }
 
+# configure cmux automation socket mode(讓 launchd 等外部行程能呼叫 cmux notify)
+function configure_cmux {
+    title="configure cmux automation socket mode"
+    print_step "$1" "$title"
+    mkdir -p ~/.config/cmux
+    # 只在不存在時佈署,避免蓋掉既有 file-managed cmux 設定;改後需重啟 cmux 才生效
+    if [ ! -f ~/.config/cmux/cmux.json ]; then
+        curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/cmux/cmux.json > ~/.config/cmux/cmux.json
+    else
+        warn "$title: 已存在 ~/.config/cmux/cmux.json,略過(請自行確認含 socketControlMode:automation 並重啟 cmux)"
+    fi
+    success "$title"
+}
+
+# configure ntfy desktop subscriber(情境 B:mini 完成 → 筆電原生 cmux 卡片)
+function configure_ntfy_desktop {
+    title="configure ntfy desktop subscriber"
+    print_step "$1" "$title"
+    mkdir -p ~/.claude
+    # handler:收 mini 的 ntfy 通知 → 解析 cmuxws_ tag → cmux notify(需 cmux automation 模式);cmux 不可用時退回 terminal-notifier
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/ntfy-desktop.sh > ~/.claude/ntfy-desktop.sh
+    chmod +x ~/.claude/ntfy-desktop.sh
+    # launchd:常駐訂閱 mini topic(always-on、開機自起);依賴 Brewfile 的 ntfy CLI。
+    # 私有端點(NTFY_HOST/topic)不進 repo,來自本機檔(secret bundle 還原),先載入再填 plist。
+    nenv="$HOME/.config/dotfiles/notify.env"
+    if [ -f "$nenv" ]; then
+        . "$nenv"
+        curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/com.tim80411.ntfy-desktop.plist \
+          | sed "s|__HOME__|$HOME|g; s|__NTFY_SUBSCRIBE_URL__|https://${NTFY_HOST}/${NTFY_TOPIC_MINI}|g" > ~/Library/LaunchAgents/com.tim80411.ntfy-desktop.plist
+        launchctl unload ~/Library/LaunchAgents/com.tim80411.ntfy-desktop.plist 2>/dev/null || true
+        launchctl load ~/Library/LaunchAgents/com.tim80411.ntfy-desktop.plist
+    else
+        warn "$title: 缺 $nenv(ntfy 私有端點),略過訂閱器 — 請先跑 ~/bin/bootstrap-secrets.sh 還原機密後重跑此步"
+    fi
+    success "$title"
+}
+
 # configure secrets scripts (pack / bootstrap via Bitwarden)
 function configure_secrets_scripts {
     title="configure secrets scripts"
@@ -300,7 +337,7 @@ function init_service {
     success "$title"
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_tmux" "configure_claude_notify" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_cmux" "configure_tmux" "configure_claude_notify" "configure_ntfy_desktop" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 

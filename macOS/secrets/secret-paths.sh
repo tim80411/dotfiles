@@ -30,6 +30,7 @@ SECRET_PATHS=(
   .config/gh
   .config/github-copilot
   .config/configstore
+  .config/dotfiles
   .npmrc
   .netrc
   .docker/config.json

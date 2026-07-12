@@ -16,41 +16,71 @@ if [ -n "$STDIN_JSON" ]; then
   NOTIFICATION_TYPE=$(echo "$STDIN_JSON" | jq -r '.notification_type // empty')
   HOOK_EVENT=$(echo "$STDIN_JSON" | jq -r '.hook_event_name // empty')
   LAST_MSG=$(echo "$STDIN_JSON" | jq -r '.last_assistant_message // empty')
+  CWD=$(echo "$STDIN_JSON" | jq -r '.cwd // empty')
 fi
 
-# 根據 hook event 和 notification type 產生 title
+# 「是哪一個 station」標籤：專案資料夾名 +（若在 git repo）分支名
+STATION=""
+if [ -n "$CWD" ]; then
+  STATION=$(basename "$CWD")
+  BRANCH=$(git -C "$CWD" branch --show-current 2>/dev/null)
+  [ -n "$BRANCH" ] && STATION="$STATION ($BRANCH)"
+fi
+[ -z "$STATION" ] && STATION="$(hostname -s)"   # 沒 cwd 時退回機器名（分得出本機/mini）
+
+# 依事件決定 emoji / 標題 / ntfy tag
+EMOJI="🔔"; TAGS="bell"
 if [ "$HOOK_EVENT" = "Stop" ]; then
-  TITLE="Claude Code"
+  EMOJI="✅"; TAGS="white_check_mark"
+  TITLE="$EMOJI $STATION 完成"
   MESSAGE="${LAST_MSG:+$(echo "$LAST_MSG" | head -c 100)}"
   MESSAGE="${MESSAGE:-任務完成}"
 elif [ -n "$NOTIFICATION_TYPE" ]; then
   case "$NOTIFICATION_TYPE" in
-    permission_prompt) TITLE="需要授權" ;;
-    idle_prompt)       TITLE="等待輸入" ;;
-    auth_success)      TITLE="認證成功" ;;
-    *)                 TITLE="Claude Code" ;;
+    permission_prompt) EMOJI="🔐"; TAGS="lock,warning"; TITLE="$EMOJI $STATION 需要授權" ;;
+    idle_prompt)       EMOJI="⌛"; TAGS="hourglass";     TITLE="$EMOJI $STATION 等待輸入" ;;
+    auth_success)      EMOJI="🔓"; TAGS="unlock";        TITLE="$EMOJI $STATION 認證成功" ;;
+    *)                 TITLE="$EMOJI $STATION" ;;
   esac
 else
-  TITLE="${1:-Claude Code}"
+  TITLE="$EMOJI ${1:-$STATION}"
   MESSAGE="${MESSAGE:-${2:-需要您的注意}}"
 fi
 
 PRIORITY=${3:-3}
+# 私有端點(ntfy host / tailscale)不進 public repo：從本機檔載入(由 secret bundle 帶著走)；
+# 缺檔則 NTFY_HOST 留空 → 下方跳過手機推播。
+[ -f "$HOME/.config/dotfiles/notify.env" ] && . "$HOME/.config/dotfiles/notify.env"
 TOPIC="claude_$(whoami)_$(hostname -s | tr '[:upper:]' '[:lower:]')"
-TAILSCALE_USER="tim80411"
-TAILSCALE_HOST="macbook-pro-3"
 
-# 推送到 ntfy (手機端) — 點擊通知後透過 ssh:// 開啟 Secure ShellFish
-curl -s \
-  -H "Title: $TITLE" \
-  -H "Priority: $PRIORITY" \
-  -H "Tags: computer,warning" \
-  -H "Click: ssh://${TAILSCALE_USER}@${TAILSCALE_HOST}" \
-  -d "$MESSAGE" \
-  "https://ntfy.teachers-assist.com/$TOPIC" > /dev/null 2>&1 &
+# 情境 B（claude 跑在 mini、不在 cmux）：devbox 連線時會把「筆電的 cmux workspace id」
+# 寫進 ~/.claude/laptop_cmux_ws。hook 觸發時讀它（讀檔而非靠 tmux 環境繼承，才不會被
+# 「既有 pane 不繼承新環境」坑到），塞進 ntfy tag，讓筆電訂閱服務點擊時聚焦回那個 tab。
+if [ -z "$CMUX_WORKSPACE_ID" ]; then
+  LAPTOP_CMUX_WS=$(cat "$HOME/.claude/laptop_cmux_ws" 2>/dev/null)
+  [ -n "$LAPTOP_CMUX_WS" ] && TAGS="$TAGS,cmuxws_$LAPTOP_CMUX_WS"
+fi
 
-# Ghostty 桌面通知 (OSC 777) — title/body 分開顯示，與原生通知風格一致
-if [ -n "$TMUX" ]; then
+# 推送到 ntfy (手機端) — 背景化但把非 200 記進 log；沒有私有端點(NTFY_HOST 空)就跳過
+if [ -n "$NTFY_HOST" ]; then
+(
+  NTFY_CODE=$(curl -s -m 8 -o /dev/null -w '%{http_code}' \
+    -H "Title: $TITLE" \
+    -H "Priority: $PRIORITY" \
+    -H "Tags: $TAGS" \
+    -H "Click: ssh://${TAILSCALE_USER}@${TAILSCALE_HOST}" \
+    -d "$MESSAGE" \
+    "https://$NTFY_HOST/$TOPIC")
+  [ "$NTFY_CODE" = "200" ] || printf '%s ntfy publish FAILED http=%s topic=%s\n' "$(date '+%F %T')" "$NTFY_CODE" "$TOPIC" >> ~/.claude/notify_mobile.log
+) &
+fi
+
+# 桌面通知：情境 A（claude 在筆電 cmux pane）→ cmux notify（點擊跳回該 tab）；否則退回 OSC 777
+if [ -n "$CMUX_WORKSPACE_ID" ] && command -v cmux >/dev/null 2>&1; then
+  # hook 是 pane 內 claude 的子行程，繼承了 pane 的 CMUX_* 環境 → cmux notify 天生有 socket 存取、
+  # 綁到這個 workspace；「點擊 → 跳回這個 tab」由 cmux 內部處理（不必烘 socket 密碼、cmux 重啟也不失效）。
+  cmux notify --workspace "$CMUX_WORKSPACE_ID" --title "$TITLE" --body "$MESSAGE" >/dev/null 2>&1
+elif [ -n "$TMUX" ]; then
   PANE_TTY=$(tmux display-message -p '#{pane_tty}')
   if [ -w "$PANE_TTY" ]; then
     printf '\ePtmux;\e\e]777;notify;%s;%s\a\e\\' "$TITLE" "$MESSAGE" > "$PANE_TTY"
