@@ -54,10 +54,22 @@ PRIORITY=${3:-3}
 TOPIC="claude_$(whoami)_$(hostname -s | tr '[:upper:]' '[:lower:]')"
 
 # 情境 B（claude 跑在 mini、不在 cmux）：devbox 連線時會把「筆電的 cmux workspace id」
-# 寫進 ~/.claude/laptop_cmux_ws。hook 觸發時讀它（讀檔而非靠 tmux 環境繼承，才不會被
-# 「既有 pane 不繼承新環境」坑到），塞進 ntfy tag，讓筆電訂閱服務點擊時聚焦回那個 tab。
+# 寫進 mini 的檔（讀檔而非靠 tmux 環境繼承，才不會被「既有 pane 不繼承新環境」坑到），
+# 塞進 ntfy tag，讓筆電訂閱服務點擊時聚焦回那個 tab。
+# 多開支援：devbox 每個 session 寫一個專屬檔 laptop_cmux_ws_<session>，避免多個 workspace 共用
+# 單檔互相覆蓋（clobber）。這裡用「本 hook 所在的 tmux session 名」讀對應檔，讀不到再退回舊單檔。
 if [ -z "$CMUX_WORKSPACE_ID" ]; then
-  LAPTOP_CMUX_WS=$(cat "$HOME/.claude/laptop_cmux_ws" 2>/dev/null)
+  # 從 pane 解析自己所在的 tmux session（hook 繼承了 pane 的 TMUX_PANE）
+  TSESS=""
+  if [ -n "$TMUX_PANE" ]; then
+    TSESS=$(tmux display-message -p -t "$TMUX_PANE" '#S' 2>/dev/null)
+  elif [ -n "$TMUX" ]; then
+    TSESS=$(tmux display-message -p '#S' 2>/dev/null)
+  fi
+  LAPTOP_CMUX_WS=""
+  [ -n "$TSESS" ] && LAPTOP_CMUX_WS=$(cat "$HOME/.claude/laptop_cmux_ws_${TSESS}" 2>/dev/null)
+  # per-session 檔讀不到 → 退回舊單檔
+  [ -z "$LAPTOP_CMUX_WS" ] && LAPTOP_CMUX_WS=$(cat "$HOME/.claude/laptop_cmux_ws" 2>/dev/null)
   [ -n "$LAPTOP_CMUX_WS" ] && TAGS="$TAGS,cmuxws_$LAPTOP_CMUX_WS"
 fi
 

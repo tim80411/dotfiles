@@ -97,6 +97,7 @@ function configure_zsh {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zshrc > ~/.zshrc
     mkdir -p ~/.zsh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/wifi-helpers.zsh > ~/.zsh/wifi-helpers.zsh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/cmux-mini.zsh > ~/.zsh/cmux-mini.zsh
     success "$title"
 }
 

@@ -156,50 +156,9 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# cmux: 自動根據 git project/branch 命名 workspace
-if [[ -n "$CMUX_WORKSPACE_ID" ]]; then
-  _cmux_auto_name() {
-    local name
-    if git rev-parse --is-inside-work-tree &>/dev/null; then
-      local project=$(basename "$(git rev-parse --show-toplevel)")
-      local branch=$(git symbolic-ref --short HEAD 2>/dev/null | tr '/' '-')
-      name="${project}/${branch:-detached}"
-    else
-      name="${PWD##*/}"
-    fi
-    cmux workspace-action --action rename --title "$name" &>/dev/null &
-  }
-  autoload -Uz add-zsh-hook
-  add-zsh-hook chpwd _cmux_auto_name
-  _cmux_auto_name  # 新 workspace 開啟時也命名一次
-fi
-
-# cmux: 開新 workspace 並自動命名
-cw() {
-  local dir="${1:-.}"
-  dir="$(cd "$dir" 2>/dev/null && pwd)" || return 1
-  local name
-  if git -C "$dir" rev-parse --is-inside-work-tree &>/dev/null; then
-    local project=$(basename "$(git -C "$dir" rev-parse --show-toplevel)")
-    local branch=$(git -C "$dir" symbolic-ref --short HEAD 2>/dev/null | tr '/' '-')
-    name="${project}/${branch:-detached}"
-  else
-    name="${dir##*/}"
-  fi
-  cmux new-workspace --cwd "$dir" --command "cmux workspace-action --action rename --title '${name}'"
-}
-
-# Ghostty + tmux: 透過 DCS passthrough 送 OSC 7 讓 Ghostty 知道當前目錄
-# 解決新開 Tab/Split 時 working-directory=inherit 無法取得 cwd 的問題
-# 注意：tmux 會把 TERM_PROGRAM 覆蓋為 "tmux"，所以改用 client_termname 偵測
-if [[ -n "$TMUX" ]] && [[ "$(tmux display-message -p '#{client_termname}' 2>/dev/null)" == *ghostty* ]]; then
-  _ghostty_osc7_passthrough() {
-    printf '\ePtmux;\e\e]7;file://%s%s\a\e\\' "${HOST}" "${PWD}"
-  }
-  autoload -Uz add-zsh-hook
-  add-zsh-hook chpwd _ghostty_osc7_passthrough
-  _ghostty_osc7_passthrough  # 初始化時也送一次
-fi
+# cmux workspace 命名 + Mac mini 遠端開發（devbox/minibox/minibox-all/cw/自動命名/ghostty OSC7）
+# 已抽成模組（沿用 ~/.zsh/*.zsh 慣例）。內容見 ~/.zsh/cmux-mini.zsh
+[[ -f "${HOME}/.zsh/cmux-mini.zsh" ]] && source "${HOME}/.zsh/cmux-mini.zsh"
 
 
 # Claude Code: Agent Teams (experimental)
