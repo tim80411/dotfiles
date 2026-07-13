@@ -8,28 +8,34 @@
 # 專屬 key DEVBOX_HOST（用 subshell 取值，避免把 NTFY_* 等變數污染到互動 shell env）。
 # 缺 notify.env / key 就留空（devbox 會連不到，請補上 secret bundle 或直接 export DEVBOX_HOST）。
 DEVBOX_HOST="${DEVBOX_HOST:-$( . "$HOME/.config/dotfiles/notify.env" 2>/dev/null; printf '%s' "$DEVBOX_HOST" )}"
-DEVBOX_WS_PREFIX="mini"        # cmux workspace 名字前綴；也是 _cmux_auto_name 的「略過前綴」
-DEVBOX_DEFAULT=(main)          # 'devbox tab' 不給參數時要開的 session 清單
+DEVBOX_WS_PREFIX="🖥"          # devbox tab 的醒目前綴；tab 命名成「<前綴> <session>」如「🖥 web」
+DEVBOX_WS_COLOR="Aqua"        # devbox tab 的 workspace 顏色（cmux 具名色；左側色條一眼分辨）
+DEVBOX_WS_CWD="$HOME"         # devbox tab 的 workspace cwd（決定通知/側欄灰路徑；只能是真實本機資料夾）
+DEVBOX_DEFAULT=(main)         # 'devbox tab' 不給參數時要開的 session 清單
+
+# 由 cwd/git 推導 workspace 名（_cmux_auto_name 與「前景 devbox 離開後還原」共用）
+_cmux_derive_name() {
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    local project=$(basename "$(git rev-parse --show-toplevel)")
+    local branch=$(git symbolic-ref --short HEAD 2>/dev/null | tr '/' '-')
+    printf '%s' "${project}/${branch:-detached}"
+  else
+    printf '%s' "${PWD##*/}"
+  fi
+}
 
 # ── cmux：依 git project/branch 自動把 workspace 命名 ─────────
-# guard：若目前 workspace 名已是 "<DEVBOX_WS_PREFIX>:" 開頭（devbox tab 釘的名），就「不覆蓋」——
-#        這解掉 --name 被 auto-name 蓋掉的 race（不必再靠 sleep/重試搶時機）。
+# guard：若目前 workspace 名已是「<DEVBOX_WS_PREFIX> 」開頭（devbox 釘的名），就「不覆蓋」——
+#        這解掉 devbox 命名被 auto-name 蓋掉的 race（不必靠 sleep/重試搶時機）。
 # 整段背景化：chpwd 不因 socket / git 呼叫卡住 prompt。
 if [[ -n "$CMUX_WORKSPACE_ID" ]]; then
   _cmux_auto_name() {
     {
-      local cur name
+      local cur
       cur=$(CMUX_QUIET=1 cmux workspace list --id-format both 2>/dev/null \
         | awk -v id="$CMUX_WORKSPACE_ID" 'index($0,id){p=index($0,id)+length(id);s=substr($0,p);gsub(/^[ \t]+|[ \t]+$/,"",s);sub(/[ \t]*\[selected\]$/,"",s);print s}')
-      [[ "$cur" == "${DEVBOX_WS_PREFIX}:"* ]] && return   # devbox tab 釘的名 → 不覆蓋
-      if git rev-parse --is-inside-work-tree &>/dev/null; then
-        local project=$(basename "$(git rev-parse --show-toplevel)")
-        local branch=$(git symbolic-ref --short HEAD 2>/dev/null | tr '/' '-')
-        name="${project}/${branch:-detached}"
-      else
-        name="${PWD##*/}"
-      fi
-      cmux workspace-action --action rename --title "$name" &>/dev/null
+      [[ "$cur" == "${DEVBOX_WS_PREFIX} "* ]] && return   # devbox 釘的名 → 不覆蓋
+      cmux workspace-action --action rename --title "$(_cmux_derive_name)" &>/dev/null
     } &>/dev/null &
   }
   autoload -Uz add-zsh-hook
@@ -69,8 +75,10 @@ fi
 #   devbox <session>   → 前景進指定 session（要多個獨立就給不同名字）
 #   devbox ls          → 列出 mini 上現有 session（不用連進去）
 #   devbox all         → 把 mini「已存在」的所有 session 各開成一個 cmux workspace（冪等）
-#   devbox tab a b c   → 把指定 session 各開成一個 cmux workspace（命名 <prefix>:<session>，冪等）
+#   devbox tab a b c   → 把指定 session 各開成一個 cmux workspace（命名「🖥 <session>」+ 上色，冪等）
 # 保留字：ls / all / tab 為子指令；session 名請用其它簡單識別字（英數/底線/連字號）。
+# 所有 devbox 用法（含前景）都會把 cmux tab 標成「🖥 <session>」+ Aqua 色，一眼認得出；
+# 前景 devbox 離開後會自動還原成本機 cwd 推導名、清色。
 devbox() {
   case "${1:-main}" in
     ls)  shift; ssh "$DEVBOX_HOST" tmux ls ;;
@@ -80,17 +88,30 @@ devbox() {
   esac
 }
 
+# 把一個 workspace 標成 devbox 專屬（醒目 title + 顏色）；冪等。
+_devbox_mark_ws() {  # $1=workspace ref/id  $2=session
+  CMUX_QUIET=1 cmux rename-workspace --workspace "$1" "${DEVBOX_WS_PREFIX} ${2}" >/dev/null 2>&1
+  CMUX_QUIET=1 cmux workspace-action --action set-color --color "$DEVBOX_WS_COLOR" --workspace "$1" >/dev/null 2>&1
+}
+# 還原一個 workspace（用 cwd 推導名 + 清色）——給「前景 devbox 離開後」用。
+_devbox_unmark_ws() {  # $1=workspace ref/id
+  CMUX_QUIET=1 cmux rename-workspace --workspace "$1" "$(_cmux_derive_name)" >/dev/null 2>&1
+  CMUX_QUIET=1 cmux workspace-action --action clear-color --workspace "$1" >/dev/null 2>&1
+}
+
 # 前景：在當前終端機 mosh 進一個 session。
-# 並轉送當前 cmux workspace id → mini 的 per-session 專屬檔（多開精準路由、不互相覆蓋）＋舊單檔 fallback，
-# 讓 mini 的通知 hook 能把「完成通知點擊」跳回這個 tab。
+# 轉送當前 cmux workspace id → mini 的 per-session 專屬檔（多開精準路由）＋舊單檔 fallback；
+# 在 cmux pane 內 → 連線期間把這個 tab 標成「🖥 <session>」+ 色（醒目），離開後自動還原。
 _devbox_connect() {
   local s="${1:-main}"
   ssh "$DEVBOX_HOST" "printf '%s' '${CMUX_WORKSPACE_ID:-}' > ~/.claude/laptop_cmux_ws_${s}; printf '%s' '${CMUX_WORKSPACE_ID:-}' > ~/.claude/laptop_cmux_ws" 2>/dev/null
+  [ -n "$CMUX_WORKSPACE_ID" ] && _devbox_mark_ws "$CMUX_WORKSPACE_ID" "$s"
   mosh "$DEVBOX_HOST" -- tmux new -A -s "$s"
+  [ -n "$CMUX_WORKSPACE_ID" ] && _devbox_unmark_ws "$CMUX_WORKSPACE_ID"
 }
 
-# 開 cmux tab：把每個 session 開成一個 workspace（命名 <prefix>:<session>），冪等（已開就聚焦、不重開）。
-# 命名不需 sleep/重試——靠 --name ＋ 上面 _cmux_auto_name 的 guard（名字是 <prefix>: 開頭就不被覆蓋）。
+# 開 cmux tab：把每個 session 開成一個 workspace（命名「🖥 <session>」+ 上色），冪等（已開就聚焦）。
+# 命名不需 sleep/重試——靠 --name ＋ _cmux_auto_name 的 guard（名字是「🖥 」開頭就不被覆蓋）。
 # 每個新 workspace 內跑 `devbox <session>` → 走到 _devbox_connect 前景進該 session。
 _devbox_tabs() {
   local -a sessions
@@ -98,20 +119,21 @@ _devbox_tabs() {
   local list first_ref="" s name ref uuid info
   list=$(CMUX_QUIET=1 cmux workspace list --id-format both 2>/dev/null)
   for s in "${sessions[@]}"; do
-    name="${DEVBOX_WS_PREFIX}:${s}"
-    # 找既有同名 workspace 的 ref + uuid（冪等）
-    info=$(print -r -- "$list" | awk -v n="$name" '{r="";u="";hit=0;for(j=1;j<=NF;j++){if($j ~ /^workspace:[0-9]+$/)r=$j;if($j ~ /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/)u=$j;if($j==n)hit=1}if(hit&&r){print r" "u;exit}}')
+    name="${DEVBOX_WS_PREFIX} ${s}"
+    # 找既有同名 workspace 的 ref + uuid（名字含空白，故比對「uuid 之後的整段」而非單一欄位）
+    info=$(print -r -- "$list" | awk -v n="$name" '{r="";u="";for(j=1;j<=NF;j++){if($j ~ /^workspace:[0-9]+$/)r=$j;if($j ~ /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/)u=$j}if(u){p=index($0,u);nm=substr($0,p+length(u));gsub(/^[ \t]+|[ \t]+$/,"",nm);sub(/[ \t]*\[selected\]$/,"",nm);if(nm==n&&r){print r" "u;exit}}}')
     ref="${info%% *}"; uuid="${info#* }"; [ "$uuid" = "$ref" ] && uuid=""
     if [ -n "$ref" ]; then
-      # 已存在→聚焦；並「刷新」該 workspace 現在的 id 到 mini 的 per-session 檔——
-      # cmux 重啟可能換 id、或路由檔被清過，focus 時一併更新才能保證點擊仍精準跳回。
+      # 已存在→聚焦；刷新該 workspace 現在的 id 到 mini（cmux 重啟換 id / 路由檔被清也能精準跳回）+ 確保標記
       [ -n "$uuid" ] && [ -n "$DEVBOX_HOST" ] && \
         ssh "$DEVBOX_HOST" "printf '%s' '$uuid' > ~/.claude/laptop_cmux_ws_${s}" 2>/dev/null
+      _devbox_mark_ws "$ref" "$s"
       print -r -- "→ ${name}  (${ref}, 已存在→聚焦・刷新路由)"
     else
       # 新開：pane 內跑的 devbox <s> → _devbox_connect 會轉送「這個新 workspace 自己的 id」，故此處不必再送。
-      ref=$(CMUX_QUIET=1 cmux new-workspace --name "$name" --command "devbox ${s}" --focus false 2>/dev/null \
+      ref=$(CMUX_QUIET=1 cmux new-workspace --name "$name" --cwd "$DEVBOX_WS_CWD" --command "devbox ${s}" --focus false 2>/dev/null \
             | grep -oE 'workspace:[0-9]+' | head -1)
+      [ -n "$ref" ] && _devbox_mark_ws "$ref" "$s"   # title 已由 --name 設，這裡主要補上色
       print -r -- "→ ${name}  (${ref:-建立失敗?}, 新開)  接 tmux '${s}'"
     fi
     [ -z "$first_ref" ] && first_ref="$ref"
