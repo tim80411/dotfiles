@@ -163,6 +163,12 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # pbpush：本機剪貼簿圖片 → mini 剪貼簿（遠端 mosh+tmux 裡的 Claude Code 按 Ctrl+V 貼圖用）
 [[ -f "${HOME}/.zsh/pbpush.zsh" ]] && source "${HOME}/.zsh/pbpush.zsh"
 
+# laptop-open：mini 檔案 → 筆電打開（在 mini 上執行；遠端 CC 產出文件快速閱讀用）
+[[ -f "${HOME}/.zsh/laptop-open.zsh" ]] && source "${HOME}/.zsh/laptop-open.zsh"
+
+# minimount：一鍵掛載 mini 家目錄到 /Volumes/tim80411（SMB；瀏覽/Quick Look/本機 CC 讀取用）
+[[ -f "${HOME}/.zsh/minimount.zsh" ]] && source "${HOME}/.zsh/minimount.zsh"
+
 
 # Claude Code: Agent Teams (experimental)
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1

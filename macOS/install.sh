@@ -99,6 +99,8 @@ function configure_zsh {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/wifi-helpers.zsh > ~/.zsh/wifi-helpers.zsh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/cmux-mini.zsh > ~/.zsh/cmux-mini.zsh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/pbpush.zsh > ~/.zsh/pbpush.zsh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/laptop-open.zsh > ~/.zsh/laptop-open.zsh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/minimount.zsh > ~/.zsh/minimount.zsh
     success "$title"
 }
 
