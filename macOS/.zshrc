@@ -160,6 +160,9 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # 已抽成模組（沿用 ~/.zsh/*.zsh 慣例）。內容見 ~/.zsh/cmux-mini.zsh
 [[ -f "${HOME}/.zsh/cmux-mini.zsh" ]] && source "${HOME}/.zsh/cmux-mini.zsh"
 
+# pbpush：本機剪貼簿圖片 → mini 剪貼簿（遠端 mosh+tmux 裡的 Claude Code 按 Ctrl+V 貼圖用）
+[[ -f "${HOME}/.zsh/pbpush.zsh" ]] && source "${HOME}/.zsh/pbpush.zsh"
+
 
 # Claude Code: Agent Teams (experimental)
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
