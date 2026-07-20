@@ -29,7 +29,8 @@ pbpush() {
   fi
 
   # 走 ssh 管線送到 mini 並塞進它的剪貼簿（fixed path 避開遠端 quoting；用完即刪）
-  if ssh "$host" 'cat > /tmp/pbpush.png &&
+  # ConnectTimeout：pbwatch daemon 自動觸發時，mini 離線要快速失敗而非久等
+  if ssh -o ConnectTimeout=3 "$host" 'cat > /tmp/pbpush.png &&
       osascript -e "set the clipboard to (read (POSIX file \"/tmp/pbpush.png\" as alias) as «class PNGf»)" &&
       rm -f /tmp/pbpush.png' < "$file"; then
     print -r -- "pbpush: ✅ 已推到 ${host} 剪貼簿 → 遠端 Claude Code 按 Ctrl+V 貼上"

@@ -301,6 +301,20 @@ function configure_ntfy_desktop {
     success "$title"
 }
 
+# configure pbwatch (剪貼簿監看：截圖/複製圖片自動 pbpush 到 mini，遠端 CC 貼圖用)
+function configure_pbwatch {
+    title="configure pbwatch clipboard watcher"
+    print_step "$1" "$title"
+    mkdir -p ~/bin
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/pbwatch/pbwatch.js > ~/bin/pbwatch.js
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/pbwatch/com.local.pbwatch.plist | sed "s|__HOME__|$HOME|g" > ~/Library/LaunchAgents/com.local.pbwatch.plist
+    # unload 在「尚未載入」時會回傳非零,屬正常情況,以 || true 吸收避免誤判失敗
+    launchctl unload ~/Library/LaunchAgents/com.local.pbwatch.plist 2>/dev/null || true
+    launchctl load ~/Library/LaunchAgents/com.local.pbwatch.plist
+
+    success "$title"
+}
+
 # configure secrets scripts (pack / bootstrap via Bitwarden)
 function configure_secrets_scripts {
     title="configure secrets scripts"
@@ -339,7 +353,7 @@ function init_service {
     success "$title"
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_cmux" "configure_tmux" "configure_claude_notify" "configure_ntfy_desktop" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_cmux" "configure_tmux" "configure_claude_notify" "configure_ntfy_desktop" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "configure_pbwatch" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
