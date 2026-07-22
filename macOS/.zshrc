@@ -109,7 +109,7 @@ alias defaultBrowserOpen='open -a $DEFAULT_BROWSER'
 
 # script
 alias update-branches="~/.local/bin/update-branches.sh"
-alias claude-monitor='cd ~/Claude-Code-Usage-Monitor && source venv/bin/activate && ./ccusage_monitor.py'
+alias claude-monitor='cd ~/self/misc/Claude-Code-Usage-Monitor && source venv/bin/activate && ./ccusage_monitor.py'
 
 # OCI Terraform (uses OCI S3-compatible credentials for remote state)
 alias tf-oci='AWS_PROFILE=oci terraform'
