@@ -33,7 +33,10 @@ EMOJI="🔔"; TAGS="bell"
 if [ "$HOOK_EVENT" = "Stop" ]; then
   EMOJI="✅"; TAGS="white_check_mark"
   TITLE="$EMOJI $STATION 完成"
-  MESSAGE="${LAST_MSG:+$(echo "$LAST_MSG" | head -c 100)}"
+  # head -c 是按 byte 截斷，中文（3 bytes/字）會被砍成半個字元 → 無效 UTF-8。
+  # ntfy 收到非合法 UTF-8 的 body 會判定成二進位附件，而 server 沒開 attachment，
+  # 於是回 400 code=40014「attachments not allowed」。iconv -c 剝掉尾端殘骸。
+  MESSAGE="${LAST_MSG:+$(printf '%s' "$LAST_MSG" | head -c 100 | iconv -f UTF-8 -t UTF-8 -c 2>/dev/null)}"
   MESSAGE="${MESSAGE:-任務完成}"
 elif [ -n "$NOTIFICATION_TYPE" ]; then
   case "$NOTIFICATION_TYPE" in
