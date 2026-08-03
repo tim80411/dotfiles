@@ -54,6 +54,23 @@ PRIORITY=${3:-3}
 # 私有端點(ntfy host / tailscale)不進 public repo：從本機檔載入(由 secret bundle 帶著走)；
 # 缺檔則 NTFY_HOST 留空 → 下方跳過手機推播。
 [ -f "$HOME/.config/dotfiles/notify.env" ] && . "$HOME/.config/dotfiles/notify.env"
+
+# TAILSCALE_HOST（通知的 Click: ssh:// 目標）是「每台機器都不同」的值，但 notify.env
+# 由跨機器共用的 secret bundle 帶著走 → 必然漂移。實際踩過：mini 上的 env 帶著筆電的
+# macbook-pro-3，推播照收、點下去卻 SSH 到另一台（且那台離線，只看得到連線失敗）。
+# 改為直接問系統「我是誰」，問不到才沿用 env 值。
+#
+# 必須取 DNSName 的第一段，不能用 HostName——HostName 是使用者可見的機器名稱，可能含
+# 中文與空格（本機實測為「YITING的Mac mini」），放進 ssh:// URL 會直接壞掉；DNSName
+# 第一段才是 MagicDNS 可解析的短名。--peers=false 讓輸出從 ~15KB 降到 ~2.8KB，約 37ms。
+_ts_bin=$(command -v tailscale 2>/dev/null)
+[ -z "$_ts_bin" ] && [ -x /Applications/Tailscale.app/Contents/MacOS/Tailscale ] \
+  && _ts_bin="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+if [ -n "$_ts_bin" ]; then
+  _ts_self=$("$_ts_bin" status --json --peers=false 2>/dev/null | jq -r '.Self.DNSName // empty' | cut -d. -f1)
+  [ -n "$_ts_self" ] && TAILSCALE_HOST="$_ts_self"
+fi
+
 TOPIC="claude_$(whoami)_$(hostname -s | tr '[:upper:]' '[:lower:]')"
 
 # 情境 B（claude 跑在 mini、不在 cmux）：devbox 連線時會把「筆電的 cmux workspace id」
