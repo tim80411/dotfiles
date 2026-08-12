@@ -251,6 +251,15 @@ function configure_claude_hooks {
     success "$title"
 }
 
+# configure claude global CLAUDE.md (全域指令：文件產製、報告形狀、驗證、canary 等)
+function configure_claude_md {
+    title="configure claude CLAUDE.md"
+    print_step "$1" "$title"
+    mkdir -p ~/.claude
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/CLAUDE.md > ~/.claude/CLAUDE.md
+    success "$title"
+}
+
 # configure TCIM auto-restart (fix input method freeze)
 function configure_tcim_restart {
     title="configure tcim auto-restart"
@@ -355,7 +364,7 @@ function init_service {
     success "$title"
 }
 
-install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_cmux" "configure_tmux" "configure_claude_notify" "configure_ntfy_desktop" "configure_claude_settings" "configure_claude_plugins" "configure_ccstatusline" "configure_tcim_restart" "configure_pbwatch" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
+install_step=("install_homebrew" "install_homebrew_dependencies" "configure_git" "configure_zsh" "configure_powerlevel10k" "configure_docker_compose" "configure_vim_config" "configure_claude_scripts" "configure_claude_hooks" "configure_ghostty" "configure_cmux" "configure_tmux" "configure_claude_notify" "configure_ntfy_desktop" "configure_claude_settings" "configure_claude_plugins" "configure_claude_md" "configure_ccstatusline" "configure_tcim_restart" "configure_pbwatch" "configure_secrets_scripts" "init_service" "setup_default_use_zsh")
 
 len=${#install_step[*]}
 
