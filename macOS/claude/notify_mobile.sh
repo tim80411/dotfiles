@@ -94,6 +94,22 @@ if [ -z "$CMUX_WORKSPACE_ID" ]; then
 fi
 
 # 推送到 ntfy (手機端) — 背景化但把非 200 記進 log；沒有私有端點(NTFY_HOST 空)就跳過
+#
+# NTFY_TOKEN（notify.env 帶入，帳號 claude-notify）：$NTFY_HOST 目前仍是
+# auth-default-access: read-write，匿名發得出去，所以這個標頭現在是 no-op。
+# 但 ZHI-83 要把它翻成 read-only(#92) 再翻成 deny-all(#91)——翻下去之後沒有
+# 這個標頭就是 403，而失敗形狀是安靜的：curl 背景化，只往 notify_mobile.log
+# 寫一行，手機單純不再響。
+#
+# ${NTFY_TOKEN:+...} 守衛：token 沒設時整個參數不展開（不會送出空的 Bearer）。
+# 已驗 bash/dash 下都只展開成單一參數。
+#
+# ⚠️ URL 一定要明確帶 https://，不可以靠 -L 從 http:// 跟著 308 跳。
+# curl 在 scheme 改變（換 origin）時會主動剝掉 Authorization
+# （CVE-2018-1000007 之後的既定防護），實測同一把假 token：
+#   明確 https://…      → 401（標頭到得了 server）
+#   -L + 不含 scheme    → 200（標頭被剝掉，退回匿名）
+# 本行已經是明確 https://，維持這樣。
 if [ -n "$NTFY_HOST" ]; then
 (
   NTFY_CODE=$(curl -s -m 8 -o /dev/null -w '%{http_code}' \
@@ -101,6 +117,7 @@ if [ -n "$NTFY_HOST" ]; then
     -H "Priority: $PRIORITY" \
     -H "Tags: $TAGS" \
     -H "Click: ssh://${TAILSCALE_USER}@${TAILSCALE_HOST}" \
+    ${NTFY_TOKEN:+-H "Authorization: Bearer $NTFY_TOKEN"} \
     -d "$MESSAGE" \
     "https://$NTFY_HOST/$TOPIC")
   [ "$NTFY_CODE" = "200" ] || printf '%s ntfy publish FAILED http=%s topic=%s\n' "$(date '+%F %T')" "$NTFY_CODE" "$TOPIC" >> ~/.claude/notify_mobile.log
@@ -119,4 +136,58 @@ elif [ -n "$TMUX" ]; then
   fi
 else
   printf '\e]777;notify;%s;%s\a' "$TITLE" "$MESSAGE"
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# herdr sidebar 狀態回報（2026-08-04 實驗；append-only，上方邏輯完全未改）
+# 目的：讓 herdr sidebar 顯示等同 cmux 圖中的「狀態圖示 + 狀態文字」。
+# 評估文件：筆電 ~/self/misc/survey-report/2026-08-04-herdr-vs-cmux/migration-assessment.md
+#
+# 為什麼需要兩個指令（實測結論，非文件推測）：
+#   report-agent    → 給語意狀態（sidebar 圖示顏色，且會 roll up 到 workspace 層）
+#   report-metadata → 給顯示文字。report-agent 的 --message 實測「不會」存進 agent 物件，
+#                     只影響 toast；要在 sidebar 常駐顯示文字必須走 $summary token。
+# 為什麼 --seq 一定要給且單調遞增（實測）：
+#   同一個 seq 再推 → 被當 stale 忽略；完全省略 --seq → 也被忽略。
+#   所以用毫秒時戳（perl；此機沒有 gdate）。
+# 為什麼用兩個不同的 --source：
+#   seq 是 per-source 計數，兩個指令共用同一 source + 同一 seq 會讓後者被判 stale。
+#
+# 要停用整段：把 HERDR_REPORT_DISABLED=1 export 出來，或直接刪除本區塊。
+# 還原原始檔：cp ~/.claude/notify_mobile.sh.pre-herdr.bak ~/.claude/notify_mobile.sh
+# ─────────────────────────────────────────────────────────────────────────────
+if [ -n "$HERDR_PANE_ID" ] && [ "$HERDR_REPORT_DISABLED" != "1" ] && command -v herdr >/dev/null 2>&1; then
+  HLOG="$HOME/.claude/herdr-report.log"
+
+  # 單調遞增的毫秒 seq
+  HSEQ=$(perl -MTime::HiRes -e 'printf "%d", Time::HiRes::time()*1000' 2>/dev/null)
+  [ -z "$HSEQ" ] && HSEQ=$(date +%s)
+
+  # Claude Code hook 事件 → herdr 語意狀態
+  case "$NOTIFICATION_TYPE" in
+    permission_prompt|idle_prompt) HSTATE=blocked ;;
+    *)
+      if [ "$HOOK_EVENT" = "Stop" ]; then HSTATE=idle   # herdr 會在「你沒看到」時自動轉 done
+      else HSTATE=unknown; fi
+      ;;
+  esac
+
+  # sidebar 顯示文字：優先用 Claude Code 原生 .message（就是 cmux 圖中那行英文），
+  # 沒有時退回自組的中文 TITLE。
+  # 壓成單行：Claude Code 的 last_assistant_message 常含換行，直接塞進 sidebar 會弄壞版面
+  # （實測 herdr-report.log 12:13:54 那筆就是多行）。順便把連續空白收斂成一個。
+  HSUMMARY=$(printf '%s' "${MESSAGE:-$TITLE}" | tr '\n\r\t' '   ' | sed -e 's/  */ /g' -e 's/^ //' -e 's/ $//')
+
+  herdr pane report-agent "$HERDR_PANE_ID" \
+    --source claude-hook-state --agent claude \
+    --state "$HSTATE" --message "$HSUMMARY" --seq "$HSEQ" >/dev/null 2>>"$HLOG" \
+    || printf '%s report-agent FAILED pane=%s state=%s\n' "$(date '+%F %T')" "$HERDR_PANE_ID" "$HSTATE" >>"$HLOG"
+
+  herdr pane report-metadata "$HERDR_PANE_ID" \
+    --source claude-hook-text \
+    --token summary="$HSUMMARY" --seq "$HSEQ" >/dev/null 2>>"$HLOG" \
+    || printf '%s report-metadata FAILED pane=%s\n' "$(date '+%F %T')" "$HERDR_PANE_ID" >>"$HLOG"
+
+  printf '%s ok pane=%s state=%s seq=%s summary=[%s]\n' \
+    "$(date '+%F %T')" "$HERDR_PANE_ID" "$HSTATE" "$HSEQ" "$HSUMMARY" >>"$HLOG"
 fi
