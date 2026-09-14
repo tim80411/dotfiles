@@ -36,7 +36,12 @@ if [ "$HOOK_EVENT" = "Stop" ]; then
   # head -c 是按 byte 截斷，中文（3 bytes/字）會被砍成半個字元 → 無效 UTF-8。
   # ntfy 收到非合法 UTF-8 的 body 會判定成二進位附件，而 server 沒開 attachment，
   # 於是回 400 code=40014「attachments not allowed」。iconv -c 剝掉尾端殘骸。
-  MESSAGE="${LAST_MSG:+$(printf '%s' "$LAST_MSG" | head -c 100 | iconv -f UTF-8 -t UTF-8 -c 2>/dev/null)}"
+  # 2026-09-13：桌面通知解耦後這則 MESSAGE 同時也是桌面顯示來源，放寬到 300 bytes、
+  # 保留換行；並先洗掉常見 markdown 記法（終端機／手機通知不會渲染 markdown，留著
+  # 只會顯示一堆星號反引號）：**、__ 去掉、反引號去掉、行首 #+ 、行首 > 去掉、
+  # 行首 -／* 換成 •。sed 逐行處理，多行訊息每一行都會套用。
+  MESSAGE="${LAST_MSG:+$(printf '%s' "$LAST_MSG" | head -c 300 | iconv -f UTF-8 -t UTF-8 -c 2>/dev/null | \
+    sed -E -e 's/\*\*//g' -e 's/__//g' -e 's/`//g' -e 's/^#{1,6} //' -e 's/^> //' -e 's/^[-*] /• /')}"
   MESSAGE="${MESSAGE:-任務完成}"
 elif [ -n "$NOTIFICATION_TYPE" ]; then
   case "$NOTIFICATION_TYPE" in
@@ -71,27 +76,19 @@ if [ -n "$_ts_bin" ]; then
   [ -n "$_ts_self" ] && TAILSCALE_HOST="$_ts_self"
 fi
 
+# 2026-09-13 解耦：桌面通知不再由本腳本直接發，改由各裝置自己的 ntfy 訂閱器
+# （ntfy-desktop.sh）負責；這裡只負責把「這則通知是哪個 herdr pane 發的、點擊要
+# 跳去哪裡」塞進 tags，讓訂閱器解析。H 優先用上面已經算好的 TAILSCALE_HOST
+# （跨機器可解析的短名），沒有才退回 hostname -s。
+# tab id 可能含冒號（如 wA:t1）——實測 ntfy 會原樣保留在 tags 陣列裡，不需要轉義
+# 或用 - 代替（2026-09-13 curl 往返驗證過，見回報）。
+if [ -n "$HERDR_PANE_ID" ]; then
+  _herdr_host="${TAILSCALE_HOST:-$(hostname -s)}"
+  TAGS="${TAGS},herdrhost_${_herdr_host},herdrws_${HERDR_WORKSPACE_ID},herdrtab_${HERDR_TAB_ID}"
+fi
+
 TOPIC="claude_$(whoami)_$(hostname -s | tr '[:upper:]' '[:lower:]')"
 
-# 情境 B（claude 跑在 mini、不在 cmux）：devbox 連線時會把「筆電的 cmux workspace id」
-# 寫進 mini 的檔（讀檔而非靠 tmux 環境繼承，才不會被「既有 pane 不繼承新環境」坑到），
-# 塞進 ntfy tag，讓筆電訂閱服務點擊時聚焦回那個 tab。
-# 多開支援：devbox 每個 session 寫一個專屬檔 laptop_cmux_ws_<session>，避免多個 workspace 共用
-# 單檔互相覆蓋（clobber）。這裡用「本 hook 所在的 tmux session 名」讀對應檔，讀不到再退回舊單檔。
-if [ -z "$CMUX_WORKSPACE_ID" ]; then
-  # 從 pane 解析自己所在的 tmux session（hook 繼承了 pane 的 TMUX_PANE）
-  TSESS=""
-  if [ -n "$TMUX_PANE" ]; then
-    TSESS=$(tmux display-message -p -t "$TMUX_PANE" '#S' 2>/dev/null)
-  elif [ -n "$TMUX" ]; then
-    TSESS=$(tmux display-message -p '#S' 2>/dev/null)
-  fi
-  LAPTOP_CMUX_WS=""
-  [ -n "$TSESS" ] && LAPTOP_CMUX_WS=$(cat "$HOME/.claude/laptop_cmux_ws_${TSESS}" 2>/dev/null)
-  # per-session 檔讀不到 → 退回舊單檔
-  [ -z "$LAPTOP_CMUX_WS" ] && LAPTOP_CMUX_WS=$(cat "$HOME/.claude/laptop_cmux_ws" 2>/dev/null)
-  [ -n "$LAPTOP_CMUX_WS" ] && TAGS="$TAGS,cmuxws_$LAPTOP_CMUX_WS"
-fi
 
 # 推送到 ntfy (手機端) — 背景化但把非 200 記進 log；沒有私有端點(NTFY_HOST 空)就跳過
 #
@@ -124,19 +121,16 @@ if [ -n "$NTFY_HOST" ]; then
 ) &
 fi
 
-# 桌面通知：情境 A（claude 在筆電 cmux pane）→ cmux notify（點擊跳回該 tab）；否則退回 OSC 777
-if [ -n "$CMUX_WORKSPACE_ID" ] && command -v cmux >/dev/null 2>&1; then
-  # hook 是 pane 內 claude 的子行程，繼承了 pane 的 CMUX_* 環境 → cmux notify 天生有 socket 存取、
-  # 綁到這個 workspace；「點擊 → 跳回這個 tab」由 cmux 內部處理（不必烘 socket 密碼、cmux 重啟也不失效）。
-  cmux notify --workspace "$CMUX_WORKSPACE_ID" --title "$TITLE" --body "$MESSAGE" >/dev/null 2>&1
-elif [ -n "$TMUX" ]; then
-  PANE_TTY=$(tmux display-message -p '#{pane_tty}')
-  if [ -w "$PANE_TTY" ]; then
-    printf '\ePtmux;\e\e]777;notify;%s;%s\a\e\\' "$TITLE" "$MESSAGE" > "$PANE_TTY"
-  fi
-else
-  printf '\e]777;notify;%s;%s\a' "$TITLE" "$MESSAGE"
-fi
+# 桌面通知：改由各裝置自己的 ntfy 訂閱器負責（2026-09-13 解耦，取代先前 herdr/
+# terminal-notifier/OSC 777 三輪嘗試）——
+#   使用者實際是在筆電操作，透過 ssh/mosh 連進這台 mini；不管是 mini 本機跳
+#   terminal-notifier、還是 herdr 的 OSC 9，都只解決得了「mini 自己螢幕上」的通知，
+#   對筆電使用者沒用。改成 mini 這支 hook 只管把訊息＋跳轉用的
+#   herdrhost_/herdrws_/herdrtab_ tags（見上方 TAGS 組裝）推上 ntfy 當中轉站；
+#   使用者的筆電（以及任何其他訂閱這個 topic 的裝置）各自跑一份
+#   ~/.claude/ntfy-desktop.sh（launchd: com.tim80411.ntfy-desktop），收到後解析
+#   tags、呼叫「自己那台機器」的 terminal-notifier，點擊時再經 ssh 連回 mini 執行
+#   herdr workspace/tab focus。本腳本到此為止，不再直接呼叫任何桌面通知指令。
 
 # ─────────────────────────────────────────────────────────────────────────────
 # herdr sidebar 狀態回報（2026-08-04 實驗；append-only，上方邏輯完全未改）
@@ -145,8 +139,9 @@ fi
 #
 # 為什麼需要兩個指令（實測結論，非文件推測）：
 #   report-agent    → 給語意狀態（sidebar 圖示顏色，且會 roll up 到 workspace 層）
-#   report-metadata → 給顯示文字。report-agent 的 --message 實測「不會」存進 agent 物件，
-#                     只影響 toast；要在 sidebar 常駐顯示文字必須走 $summary token。
+#   report-metadata → 給顯示文字。report-agent 的 --message 實測「不會顯示在任何地方」
+#                     （只存進內部欄位，無讀取點）；保留只為了介面相容，要在 sidebar
+#                     常駐顯示文字必須走 report-metadata 的 $summary token。
 # 為什麼 --seq 一定要給且單調遞增（實測）：
 #   同一個 seq 再推 → 被當 stale 忽略；完全省略 --seq → 也被忽略。
 #   所以用毫秒時戳（perl；此機沒有 gdate）。
