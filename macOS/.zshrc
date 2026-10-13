@@ -157,8 +157,8 @@ export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # cmux workspace 命名 + Mac mini 遠端開發（devbox/minibox/minibox-all/cw/自動命名/ghostty OSC7）
-# 已抽成模組（沿用 ~/.zsh/*.zsh 慣例）。內容見 ~/.zsh/cmux-mini.zsh
-[[ -f "${HOME}/.zsh/cmux-mini.zsh" ]] && source "${HOME}/.zsh/cmux-mini.zsh"
+# 已抽成模組（沿用 ~/.zsh/*.zsh 慣例）。內容見 ~/.zsh/ghostty-osc7.zsh
+[[ -f "${HOME}/.zsh/ghostty-osc7.zsh" ]] && source "${HOME}/.zsh/ghostty-osc7.zsh"
 
 # pbpush：本機剪貼簿圖片 → mini 剪貼簿（遠端 mosh+tmux 裡的 Claude Code 按 Ctrl+V 貼圖用）
 [[ -f "${HOME}/.zsh/pbpush.zsh" ]] && source "${HOME}/.zsh/pbpush.zsh"

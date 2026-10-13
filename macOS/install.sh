@@ -97,7 +97,7 @@ function configure_zsh {
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zshrc > ~/.zshrc
     mkdir -p ~/.zsh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/wifi-helpers.zsh > ~/.zsh/wifi-helpers.zsh
-    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/cmux-mini.zsh > ~/.zsh/cmux-mini.zsh
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/ghostty-osc7.zsh > ~/.zsh/ghostty-osc7.zsh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/pbpush.zsh > ~/.zsh/pbpush.zsh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/laptop-open.zsh > ~/.zsh/laptop-open.zsh
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/.zsh/minimount.zsh > ~/.zsh/minimount.zsh
@@ -257,6 +257,8 @@ function configure_claude_md {
     print_step "$1" "$title"
     mkdir -p ~/.claude
     curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/claude/CLAUDE.md > ~/.claude/CLAUDE.md
+    # CLAUDE.md 以 @~/AGENTS.md import 共用規則，兩檔要一起裝
+    curl -fsSL https://raw.githubusercontent.com/tim80411/dotfiles/master/macOS/AGENTS.md > ~/AGENTS.md
     success "$title"
 }
 
