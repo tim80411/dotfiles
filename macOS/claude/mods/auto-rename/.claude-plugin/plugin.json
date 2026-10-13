@@ -1,0 +1,1 @@
+{ "name": "auto-rename", "version": "0.2.0", "description": "After the first question's turn ends, runs /rename so the session gets an @-mentionable name", "types": "./types/index.d.ts" }

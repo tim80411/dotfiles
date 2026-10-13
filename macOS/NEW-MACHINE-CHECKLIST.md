@@ -71,6 +71,7 @@
 - [ ] 驗證套件全裝：`brew bundle check --file macOS/Brewfile`（或重跑 `brew bundle`）
 - [ ] 確認 `~/.zshrc`、`~/.gitconfig`、`~/.tmux.conf`、`~/.config/ghostty/config` 已就位
 - [ ] 確認 `~/.claude/`（settings/hooks/plugins/scripts）已就位
+- [ ] `~/.claude/mods/auto-rename` 已就位（settings env `CLAUDE_CODE_PLUGIN_DIRS`）
 - [ ] 確認 `~/AGENTS.md` 與 `~/.claude/CLAUDE.md` 都在（CLAUDE.md 靠 `@~/AGENTS.md` import 共用規則，缺 AGENTS.md 規則會靜默失效）：`claude -p "你的指令裡有沒有 Canary 段？"` 應回「有」
 
 ---
