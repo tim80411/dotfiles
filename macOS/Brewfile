@@ -76,6 +76,8 @@ cask "arc"
 cask "bitwarden"
 cask "claude"
 cask "claude-code"
+# Google Antigravity CLI（指令 agy），writing-ab 寫作 A/B 實驗的 Gemini 端
+cask "antigravity-cli"
 cask "cmux"
 cask "cursor"
 cask "discord"

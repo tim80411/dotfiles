@@ -28,6 +28,7 @@
 | SSH 私鑰 / GPG 私鑰 | ❌ 手動 | repo 只含 `sshConfig`，不含密鑰 |
 | 各雲端 CLI 登入（aws/azure/gcloud/oci/gh） | ❌ 手動 | 只裝工具，不含憑證 |
 | Claude Code 登入 + OTEL token | ❌ 手動 | `settings.json` 內是 `placeholder` |
+| Antigravity CLI（agy）Google 登入 | ❌ 手動 | Brewfile 只裝 cask，首次執行 `agy` 走 OAuth |
 | Bitbucket / GitHub 私有 marketplace 存取 | ❌ 手動 | plugin 來源需 SSH/登入 |
 | mkcert rootCA | ❌ 手動 | 需 `mkcert -install` 重新產生 |
 | TCIM 輸入法**本體安裝** | ❌ 手動 | 只自動化重啟，不含安裝 |
@@ -86,6 +87,7 @@
 - [ ] Claude Code 登入，並把 `~/.claude/settings.json` 的 `OTEL_EXPORTER_OTLP_HEADERS` 從 `placeholder` 換成真實 token
 - [ ] Bitbucket SSH 存取（`nani_skill` marketplace 來源為 `git@bitbucket.org`）
 - [ ] GitHub 私有 repo 存取（`tim-private-skills` marketplace）
+- [ ] Antigravity CLI：終端機執行 `agy` 完成 Google 登入（writing-ab 寫作 A/B 實驗需要；之後 `agy models` 應列出 gemini-4-* 模型而非 "Please sign in"）
 - [ ] `mkcert -install` 產生並信任本機 rootCA（供 `NODE_EXTRA_CA_CERTS` / gRPC 使用）
 - [ ] 各 App 登入/授權：Discord、Termius、TablePlus、Postman、Raycast、Shottr 等
 

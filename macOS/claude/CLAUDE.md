@@ -30,3 +30,15 @@
 
 # 簡報預設走 open-slide (Slides Default)
 **前提：本機有 `~/.claude/skills/my-slides/` 才適用**（目前只有 mini 有；沒有就照一般簡報流程）。凡是做簡報／投影片／deck／presentation，一律先載入使用者層級的 `my-slides` skill（`~/.claude/skills/my-slides/SKILL.md`），預設在 `~/self/products/slides` 這個 open-slide 工作區產出並 push 上線；只有使用者明確要 `.pptx` 檔才改走 pptx skill。工作區內 open-slide 自帶的 skill（create-slide、slide-authoring 等）要用絕對路徑直接讀來照做。
+
+# 寫作 A/B 實驗：Claude vs Gemini (Writing A/B Experiment)
+**狀態：ON**（要關閉就把這整段刪掉，或把 ON 改成 OFF）。
+**觸發範圍**：以「產出型態」判定——凡是最終產出是一份以文字為主的文件就觸發，不論格式（.md、.docx、.pdf、Confluence／Notion 頁、Claude Docs…）與種類（文章、報告、spec、計畫、筆記、README、release note、簡報文案、摘要、提案、翻譯、潤稿…）。新寫整份或重寫／潤飾一個段落以上才算；單句小修不觸發。A/B 只比文字內容，格式轉換（docx／pdf／發佈）在選出勝者後才做。
+**做法**：一律先載入 `writing-ab` skill（tim-private-skills plugin，即 `/writing-ab:writing-ab`）照做：同一份 brief 平行派 Claude subagent 與 `agy`（Antigravity CLI）的 Gemini，盲測 A/B，用 AskUserQuestion 讓使用者選，結果記錄到 log。
+**排除**：
+- 程式碼、設定檔（yaml／json／env）、commit message
+- agent 指令檔（CLAUDE.md／SKILL.md／AGENTS.md／hooks）與記憶檔
+- 固定套版表單（如 nani-office 需求單／採購單）
+- write-me skill 範圍的訊息（以使用者本人口吻發給別人）
+- 使用者說「不用 A/B」「只要 Claude」「只要 Gemini」
+**前提**：plugin `writing-ab@tim-private-skills` 已安裝；`agy` 須已登入；未登入就提示使用者先在終端機執行 `agy` 登入，這次只跑 Claude 側且不記 log。
