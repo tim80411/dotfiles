@@ -60,7 +60,7 @@ PRIORITY=${3:-3}
 # 缺檔則 NTFY_HOST 留空 → 下方跳過手機推播。
 [ -f "$HOME/.config/dotfiles/notify.env" ] && . "$HOME/.config/dotfiles/notify.env"
 
-# TAILSCALE_HOST（通知的 Click: ssh:// 目標）是「每台機器都不同」的值，但 notify.env
+# TAILSCALE_HOST（通知 Actions 按鈕的 ssh:// 目標）是「每台機器都不同」的值，但 notify.env
 # 由跨機器共用的 secret bundle 帶著走 → 必然漂移。實際踩過：mini 上的 env 帶著筆電的
 # macbook-pro-3，推播照收、點下去卻 SSH 到另一台（且那台離線，只看得到連線失敗）。
 # 改為直接問系統「我是誰」，問不到才沿用 env 值。
@@ -149,11 +149,31 @@ if [ -z "$SKIP_REASON" ] && [ "$HOOK_EVENT" = "Stop" ] && [ -n "$NTFY_HOST" ]; t
   fi
 fi
 
+# ─────────────────────────────────────────────────────────────────────────────
+# 點擊目標改開 Claude App、SSH 改成按鈕（2026-11-25）
+# iOS 的 Claude App 會接手 https://claude.ai/code/... 連結，點通知直接回到該 session
+# 比 SSH 好用；SSH 仍保留，改成通知上的一顆「開 SSH」Actions 按鈕。
+# session id 來源（hook 子行程的環境變數，依序取用）：
+#   1. CLAUDE_CODE_BRIDGE_SESSION_ID — Remote Control 連線中才有
+#   2. CLAUDE_CODE_REMOTE_SESSION_ID — 雲端 session
+#   都沒有就退回 https://claude.ai/code（首頁）。
+# 不能用 hook stdin 的 session_id：那是本機識別碼，組出來的網址開不了。
+# 防呆：id 含 [A-Za-z0-9_-] 以外的字元（空白、換行、斜線…）當成沒有，避免壞值汙染 HTTP 標頭。
+# ntfy-desktop.sh（桌面訂閱器）只讀 tags、不讀 click，所以不受影響。
+# 還原：cp ~/.claude/notify_mobile.sh.bak-2026-11-25-click ~/.claude/notify_mobile.sh
+# ─────────────────────────────────────────────────────────────────────────────
+_cc_sid="${CLAUDE_CODE_BRIDGE_SESSION_ID:-$CLAUDE_CODE_REMOTE_SESSION_ID}"
+case "$_cc_sid" in *[!A-Za-z0-9_-]*) _cc_sid="" ;; esac
+CLICK_URL="https://claude.ai/code${_cc_sid:+/$_cc_sid}"
+
+SSH_URL=""
+[ -n "$TAILSCALE_USER" ] && [ -n "$TAILSCALE_HOST" ] && SSH_URL="ssh://${TAILSCALE_USER}@${TAILSCALE_HOST}"
+
 if [ "$NOTIFY_DEBUG" = "1" ]; then
   if [ -n "$SKIP_REASON" ]; then
     echo "notify_mobile: skip reason=$SKIP_REASON title=[$TITLE]" >&2
   elif [ -n "$NTFY_HOST" ]; then
-    echo "notify_mobile: publish title=[$TITLE]" >&2
+    echo "notify_mobile: publish title=[$TITLE] click=[$CLICK_URL] ssh=[$SSH_URL]" >&2
   fi
 fi
 
@@ -181,7 +201,8 @@ if [ -n "$NTFY_HOST" ] && [ -z "$SKIP_REASON" ]; then
     -H "Title: $TITLE" \
     -H "Priority: $PRIORITY" \
     -H "Tags: $TAGS" \
-    -H "Click: ssh://${TAILSCALE_USER}@${TAILSCALE_HOST}" \
+    -H "Click: $CLICK_URL" \
+    ${SSH_URL:+-H "Actions: view, 開 SSH, $SSH_URL"} \
     ${NTFY_TOKEN:+-H "Authorization: Bearer $NTFY_TOKEN"} \
     -d "$MESSAGE" \
     "https://$NTFY_HOST/$TOPIC")
