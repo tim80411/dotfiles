@@ -89,6 +89,74 @@ fi
 
 TOPIC="claude_$(whoami)_$(hostname -s | tr '[:upper:]' '[:lower:]')"
 
+# ─────────────────────────────────────────────────────────────────────────────
+# 少推幾類 ntfy 通知（2026-11-25）
+# 使用者原則：「只有需要我動手時才推」——只留「需要我做決定」與「做完了去看結果」。
+# 只擋下方 ntfy 推播；herdr sidebar 狀態回報不受影響（所以這裡絕不提早 exit）。
+# SKIP_REASON 空字串＝照常推。
+#
+# 規則 1：關閉 idle_prompt 與 auth_success。
+#   idle（等待輸入）與 Stop（完成）重複：實測 9 小時內 16 則 idle，全部在同工作區
+#   10 分鐘內已經有一則完成通知。auth_success 只是告知、不需動手。
+#   採「拒絕清單」：permission_prompt、elicitation_dialog 與任何未知類型都照推，
+#   因為那些可能是需要使用者做決定的事件，寧可多推也不要漏。
+# 規則 2：NTFY_MUTE_STOP_CWDS（notify.env 提供，冒號分隔的絕對路徑）底下的「完成」
+#   不推（例如 telegram-brain，大腦本來就用 Telegram 回報）。只影響 Stop，同目錄的
+#   permission_prompt 仍照推；變數空或未設＝不靜音。用設定值而非寫死路徑，因為
+#   本檔會進公開的 dotfiles repo。
+# 規則 3：Stop 30 秒去重。實測 30 秒內同工作區重複完成有 19 對。狀態檔記的是
+#   「上次實際推出」的時間，被跳過時不更新——否則會變滑動視窗，連續事件會讓最後
+#   一則永遠推不出來。NTFY_STOP_DEDUPE_SECS 可調視窗（預設 30，0＝停用）。
+#
+# 還原：cp ~/.claude/notify_mobile.sh.bak-2026-11-25 ~/.claude/notify_mobile.sh
+# 除錯：NOTIFY_DEBUG=1 時往 stderr 印一行 publish／skip（不寫常態 log，避免無限成長）。
+# ─────────────────────────────────────────────────────────────────────────────
+SKIP_REASON=""
+case "$NOTIFICATION_TYPE" in
+  idle_prompt|auth_success) SKIP_REASON="$NOTIFICATION_TYPE" ;;
+esac
+
+if [ -z "$SKIP_REASON" ] && [ "$HOOK_EVENT" = "Stop" ] && [ -n "$NTFY_MUTE_STOP_CWDS" ] && [ -n "$CWD" ]; then
+  _cwd_norm="${CWD%/}"
+  _old_ifs="$IFS"; IFS=':'
+  for _dir in $NTFY_MUTE_STOP_CWDS; do
+    _dir="${_dir%/}"
+    [ -z "$_dir" ] && continue
+    case "$_cwd_norm" in
+      "$_dir"|"$_dir"/*) SKIP_REASON="muted_cwd"; break ;;
+    esac
+  done
+  IFS="$_old_ifs"
+fi
+
+if [ -z "$SKIP_REASON" ] && [ "$HOOK_EVENT" = "Stop" ] && [ -n "$NTFY_HOST" ]; then
+  _win="${NTFY_STOP_DEDUPE_SECS:-30}"
+  case "$_win" in ''|*[!0-9]*) _win=30 ;; esac
+  if [ "$_win" -gt 0 ]; then
+    _key="${CWD:-$STATION}"
+    _state_dir="$HOME/.claude/notify_state"
+    _state_file="$_state_dir/stop_$(printf '%s' "$_key" | cksum | cut -d' ' -f1)"
+    mkdir -p "$_state_dir" 2>/dev/null
+    _now=$(date +%s)
+    _last=$(cat "$_state_file" 2>/dev/null)
+    case "$_last" in ''|*[!0-9]*) _last=0 ;; esac
+    if [ $((_now - _last)) -lt "$_win" ]; then
+      SKIP_REASON="dedupe"   # 不更新狀態檔：基準永遠是上次實際推出的時間
+    else
+      # 在啟動背景 curl 之前就寫，讓同時觸發的另一個 hook 盡早看到
+      printf '%s\n' "$_now" > "$_state_file" 2>/dev/null
+    fi
+  fi
+fi
+
+if [ "$NOTIFY_DEBUG" = "1" ]; then
+  if [ -n "$SKIP_REASON" ]; then
+    echo "notify_mobile: skip reason=$SKIP_REASON title=[$TITLE]" >&2
+  elif [ -n "$NTFY_HOST" ]; then
+    echo "notify_mobile: publish title=[$TITLE]" >&2
+  fi
+fi
+
 
 # 推送到 ntfy (手機端) — 背景化但把非 200 記進 log；沒有私有端點(NTFY_HOST 空)就跳過
 #
@@ -107,7 +175,7 @@ TOPIC="claude_$(whoami)_$(hostname -s | tr '[:upper:]' '[:lower:]')"
 #   明確 https://…      → 401（標頭到得了 server）
 #   -L + 不含 scheme    → 200（標頭被剝掉，退回匿名）
 # 本行已經是明確 https://，維持這樣。
-if [ -n "$NTFY_HOST" ]; then
+if [ -n "$NTFY_HOST" ] && [ -z "$SKIP_REASON" ]; then
 (
   NTFY_CODE=$(curl -s -m 8 -o /dev/null -w '%{http_code}' \
     -H "Title: $TITLE" \
